@@ -11,6 +11,26 @@ body {
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #f8f9fa;
+  overflow-y: scroll !important;
+}
+
+body::-webkit-scrollbar {
+  width: 0 !important;
+  background: transparent;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+html::-webkit-scrollbar {
+  width: 0 !important;
+  background: transparent;
+}
+
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 main {
@@ -32,21 +52,29 @@ main {
   overflow: hidden;
 }
 
-::-webkit-scrollbar {
+.modal-container::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar,
+.episodes-list::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-::-webkit-scrollbar-track {
+.modal-container::-webkit-scrollbar-track,
+.modal-body::-webkit-scrollbar-track,
+.episodes-list::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 
-::-webkit-scrollbar-thumb {
+.modal-container::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb,
+.episodes-list::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+.modal-container::-webkit-scrollbar-thumb:hover,
+.modal-body::-webkit-scrollbar-thumb:hover,
+.episodes-list::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
