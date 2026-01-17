@@ -1,0 +1,58 @@
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <div class="brand-wrapper">
+        <div class="brand-icon">
+          <i class="bi bi-rocket-takeoff-fill"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Dimension C-137</span>
+          <span class="brand-subtitle">Rick & Morty Explorer</span>
+        </div>
+      </div>
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="bi bi-house-fill me-2"></i>
+            <span>Inicio</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/characters" routerLinkActive="active">
+            <i class="bi bi-person-badge-fill me-2"></i>
+            <span>Personajes</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/locations" routerLinkActive="active">
+            <i class="bi bi-geo-alt-fill me-2"></i>
+            <span>Locaciones</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/episodes" routerLinkActive="active">
+            <i class="bi bi-collection-play-fill me-2"></i>
+            <span>Episodios</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

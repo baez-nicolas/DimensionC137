@@ -1,0 +1,106 @@
+@if (loading()) {
+  <div class="container py-5">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+} @else if (character()) {
+  <div class="container py-4">
+    <div class="row mb-3">
+      <div class="col">
+        <a routerLink="/characters" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left"></i> Back to Characters
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card shadow">
+          <img [src]="character()!.image" [alt]="character()!.name" class="card-img-top" />
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="card shadow">
+          <div class="card-body">
+            <h1 class="card-title display-5 mb-3">{{ character()!.name }}</h1>
+
+            <div class="mb-3">
+              <span [class]="getStatusClass(character()!.status)">
+                {{ character()!.status }}
+              </span>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-sm-6 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Species:</strong>
+                  <p class="mb-0">{{ character()!.species }}</p>
+                </div>
+              </div>
+
+              @if (character()!.type) {
+                <div class="col-sm-6 mb-3">
+                  <div class="info-item">
+                    <strong class="text-muted">Type:</strong>
+                    <p class="mb-0">{{ character()!.type }}</p>
+                  </div>
+                </div>
+              }
+
+              <div class="col-sm-6 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Gender:</strong>
+                  <p class="mb-0">{{ character()!.gender }}</p>
+                </div>
+              </div>
+
+              <div class="col-sm-6 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Origin:</strong>
+                  <p class="mb-0">{{ character()!.origin.name }}</p>
+                </div>
+              </div>
+
+              <div class="col-sm-6 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Last Location:</strong>
+                  <p class="mb-0">{{ character()!.location.name }}</p>
+                </div>
+              </div>
+
+              <div class="col-sm-6 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Episodes:</strong>
+                  <p class="mb-0">{{ character()!.episode.length }} episodes</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="episodes-section">
+              <h5 class="mb-3">Episodes Appeared In:</h5>
+              <div class="episodes-grid">
+                @for (episode of character()!.episode; track episode) {
+                  <span class="badge bg-primary me-2 mb-2">
+                    Episode {{ getEpisodeNumber(episode) }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="container py-5">
+    <div class="alert alert-danger text-center" role="alert">
+      <h4 class="alert-heading">Character not found</h4>
+      <p>The character you are looking for does not exist.</p>
+      <a routerLink="/characters" class="btn btn-primary">Go back to Characters</a>
+    </div>
+  </div>
+}

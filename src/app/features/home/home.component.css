@@ -1,0 +1,270 @@
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #0a0e27;
+}
+
+.animated-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(99, 179, 237, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(168, 85, 247, 0.2) 0%, transparent 50%);
+  animation: pulse 8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.portal-icon {
+  font-size: 5rem;
+  color: #60a5fa;
+  animation: rotate 10s linear infinite;
+  text-shadow: 0 0 30px rgba(96, 165, 250, 0.8);
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+.feature-card {
+  position: relative;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  height: 100%;
+}
+
+.card-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.feature-card:hover .card-glow {
+  opacity: 1;
+}
+
+.characters-card {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(29, 78, 216, 0.2) 100%);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.locations-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.episodes-card {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.feature-card:hover {
+  transform: translateY(-15px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.characters-card:hover {
+  box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4);
+}
+.locations-card:hover {
+  box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4);
+}
+.episodes-card:hover {
+  box-shadow: 0 20px 60px rgba(245, 158, 11, 0.4);
+}
+
+.feature-icon-wrapper {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.characters-card .feature-icon-wrapper {
+  color: #3b82f6;
+}
+.locations-card .feature-icon-wrapper {
+  color: #10b981;
+}
+.episodes-card .feature-icon-wrapper {
+  color: #f59e0b;
+}
+
+.card-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.card-stats {
+  display: flex;
+  flex-direction: column;
+  margin: 1.5rem 0;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.characters-card .stat-number {
+  color: #60a5fa;
+}
+.locations-card .stat-number {
+  color: #34d399;
+}
+.episodes-card .stat-number {
+  color: #fbbf24;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+.card-arrow {
+  font-size: 2rem;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s;
+}
+
+.feature-card:hover .card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.characters-card .card-arrow {
+  color: #3b82f6;
+}
+.locations-card .card-arrow {
+  color: #10b981;
+}
+.episodes-card .card-arrow {
+  color: #f59e0b;
+}
+
+.features-section {
+  background: #0f172a;
+}
+
+.info-box {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s;
+}
+
+.info-box:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-5px);
+}
+
+.info-icon {
+  font-size: 3rem;
+  color: #60a5fa;
+  margin-bottom: 1rem;
+}
+
+.info-box h3 {
+  color: #fff;
+  font-weight: 700;
+}
+
+.info-box p {
+  color: #94a3b8;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  .portal-icon {
+    font-size: 3rem;
+  }
+}

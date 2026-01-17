@@ -1,0 +1,20 @@
+.info-item {
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+}
+
+.episodes-section {
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.episodes-grid {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.card-img-top {
+  border-radius: 0.25rem;
+  object-fit: cover;
+}

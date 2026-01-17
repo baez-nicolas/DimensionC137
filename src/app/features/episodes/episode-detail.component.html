@@ -1,0 +1,113 @@
+@if (loading()) {
+  <div class="container py-5">
+    <div class="text-center">
+      <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+} @else if (episode()) {
+  <div class="container py-4">
+    <div class="row mb-3">
+      <div class="col">
+        <a routerLink="/episodes" class="btn btn-outline-warning">
+          <i class="bi bi-arrow-left"></i> Back to Episodes
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="card shadow">
+          <div class="card-header bg-warning">
+            <div class="d-flex justify-content-between align-items-center">
+              <h1 class="card-title display-6 mb-0">{{ episode()!.name }}</h1>
+              <span class="badge bg-dark fs-5">{{ episode()!.episode }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Air Date:</strong>
+                  <p class="mb-0 h5">{{ episode()!.air_date }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Season:</strong>
+                  <p class="mb-0 h5">{{ getSeasonNumber(episode()!.episode) }}</p>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Episode Number:</strong>
+                  <p class="mb-0 h5">{{ getEpisodeNumber(episode()!.episode) }}</p>
+                </div>
+              </div>
+
+              <div class="col-12 mb-3">
+                <div class="info-item">
+                  <strong class="text-muted">Total Characters:</strong>
+                  <p class="mb-0 h5">
+                    <span class="badge bg-warning text-dark">{{
+                      episode()!.characters.length
+                    }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (characters().length > 0) {
+        <div class="col-12">
+          <h3 class="mb-3">Characters in this Episode (Showing first 12)</h3>
+          <div class="row">
+            @for (character of characters(); track character.id) {
+              <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card h-100 shadow-sm hover-card">
+                  <img [src]="character.image" [alt]="character.name" class="card-img-top" />
+                  <div class="card-body">
+                    <h6 class="card-title">{{ character.name }}</h6>
+                    <p class="card-text mb-1 small">
+                      <strong>Status:</strong> {{ character.status }}
+                    </p>
+                    <p class="card-text mb-1 small">
+                      <strong>Species:</strong> {{ character.species }}
+                    </p>
+                  </div>
+                  <div class="card-footer bg-transparent">
+                    <a
+                      [routerLink]="['/characters', character.id]"
+                      class="btn btn-sm btn-outline-primary w-100"
+                    >
+                      View Character
+                    </a>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="col-12">
+          <div class="alert alert-info" role="alert">
+            No character information available for this episode.
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="container py-5">
+    <div class="alert alert-danger text-center" role="alert">
+      <h4 class="alert-heading">Episode not found</h4>
+      <p>The episode you are looking for does not exist.</p>
+      <a routerLink="/episodes" class="btn btn-warning">Go back to Episodes</a>
+    </div>
+  </div>
+}

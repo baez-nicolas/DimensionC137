@@ -1,0 +1,103 @@
+<div class="container py-4">
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="display-4 fw-bold text-success">Locaciones</h1>
+      <p class="lead">Descubre las dimensiones y lugares del multiverso</p>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Buscar por nombre de locación..."
+        #searchInput
+        (keyup.enter)="onSearch(searchInput.value)"
+      />
+    </div>
+    <div class="col-md-4 mb-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Filtrar por tipo..."
+        #typeInput
+        (keyup.enter)="onFilterType(typeInput.value)"
+      />
+    </div>
+    <div class="col-md-2 mb-3">
+      <button class="btn btn-success w-100" (click)="onSearch(searchInput.value)">Buscar</button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  } @else if (locations().length > 0) {
+    <div class="row">
+      @for (location of locations(); track location.id) {
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card h-100 shadow-sm hover-card">
+            <div class="card-header bg-success text-white">
+              <h5 class="card-title mb-0">{{ location.name }}</h5>
+            </div>
+            <div class="card-body">
+              <p class="card-text mb-2"><strong>Tipo:</strong> {{ location.type }}</p>
+              <p class="card-text mb-2"><strong>Dimensión:</strong> {{ location.dimension }}</p>
+              <p class="card-text mb-2">
+                <strong>Residentes:</strong>
+                <span class="badge bg-success">{{ location.residents.length }}</span>
+              </p>
+            </div>
+            <div class="card-footer bg-transparent">
+              <a
+                [routerLink]="['/locations', location.id]"
+                class="btn btn-sm btn-outline-success w-100"
+              >
+                Ver Detalles
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <nav aria-label="Paginación de locaciones">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage() === 1">
+          <button class="page-link" (click)="previousPage()" [disabled]="currentPage() === 1">
+            Anterior
+          </button>
+        </li>
+
+        @for (page of [1, 2, 3]; track page) {
+          @if (currentPage() - 2 + page > 0 && currentPage() - 2 + page <= totalPages()) {
+            <li class="page-item" [class.active]="currentPage() === currentPage() - 2 + page">
+              <button class="page-link" (click)="goToPage(currentPage() - 2 + page)">
+                {{ currentPage() - 2 + page }}
+              </button>
+            </li>
+          }
+        }
+
+        <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+          <button
+            class="page-link"
+            (click)="nextPage()"
+            [disabled]="currentPage() === totalPages()"
+          >
+            Siguiente
+          </button>
+        </li>
+      </ul>
+    </nav>
+  } @else {
+    <div class="alert alert-info text-center" role="alert">
+      <h4 class="alert-heading">No se encontraron locaciones</h4>
+      <p>Intenta ajustar los filtros de búsqueda</p>
+    </div>
+  }
+</div>
