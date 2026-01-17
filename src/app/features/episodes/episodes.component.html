@@ -7,13 +7,13 @@
   </div>
 
   <div class="row mb-4">
-    <div class="col-md-6 mb-3">
+    <div class="col-md-8 mb-3">
       <input
         type="text"
         class="form-control"
         placeholder="Buscar por nombre de episodio..."
-        #searchInput
-        (keyup.enter)="onSearch(searchInput.value)"
+        (input)="onSearch($any($event.target).value)"
+        [value]="searchName()"
       />
     </div>
     <div class="col-md-4 mb-3">
@@ -21,12 +21,9 @@
         type="text"
         class="form-control"
         placeholder="Filtrar por código (ej: S01E01)..."
-        #episodeInput
-        (keyup.enter)="onFilterEpisode(episodeInput.value)"
+        (input)="onFilterEpisode($any($event.target).value)"
+        [value]="filterEpisode()"
       />
-    </div>
-    <div class="col-md-2 mb-3">
-      <button class="btn btn-warning w-100" (click)="onSearch(searchInput.value)">Buscar</button>
     </div>
   </div>
 
@@ -40,37 +37,31 @@
     <div class="row">
       @for (episode of episodes(); track episode.id) {
         <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card h-100 hover-card">
-            <div class="card-header">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="episode-badge">{{ episode.episode }}</span>
-                <small class="air-date">
-                  <i class="bi bi-calendar-event me-1"></i>{{ episode.air_date }}
-                </small>
-              </div>
-            </div>
-            <div class="card-body">
+          <div class="card h-100 episode-card">
+            <div class="card-body text-center">
               <h5 class="card-title mb-3">
                 <i class="bi bi-play-circle-fill me-2"></i>{{ episode.name }}
               </h5>
-              <div class="d-flex flex-column gap-3">
+              <div class="d-flex flex-column gap-3 text-start">
                 <div class="info-item">
-                  <strong><i class="bi bi-film me-2"></i>Temporada:</strong>
-                  <span class="info-value">{{ getSeasonNumber(episode.episode) }}</span>
+                  <strong><i class="bi bi-film me-2"></i>Episodio:</strong>
+                  <span>{{ episode.episode }}</span>
+                </div>
+                <div class="info-item">
+                  <strong><i class="bi bi-calendar-event me-2"></i>Fecha de Emisión:</strong>
+                  <span>{{ episode.air_date }}</span>
                 </div>
                 <div class="info-item">
                   <strong><i class="bi bi-people-fill me-2"></i>Personajes:</strong>
-                  <span class="badge-count">{{ episode.characters.length }}</span>
+                  <span>{{ episode.characters.length }}</span>
                 </div>
               </div>
             </div>
-            <div class="card-footer bg-transparent">
-              <a
-                [routerLink]="['/episodes', episode.id]"
-                class="btn btn-sm btn-outline-warning w-100"
-              >
-                <i class="bi bi-eye-fill me-2"></i>Ver Detalles
-              </a>
+            <div class="card-footer bg-transparent text-center">
+              <button class="btn-detail-custom w-100" (click)="openEpisodeModal(episode)">
+                <span class="btn-content">Ver Detalles</span>
+                <span class="btn-arrow">→</span>
+              </button>
             </div>
           </div>
         </div>
@@ -117,3 +108,103 @@
     </div>
   }
 </div>
+
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-content-custom">
+        @if (selectedEpisode()) {
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-play-circle-fill me-2"></i>
+              {{ selectedEpisode()!.name }}
+            </h5>
+            <button type="button" class="btn-close" (click)="closeModal()"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="episode-info">
+                  <div class="info-group mb-3">
+                    <label class="info-label">
+                      <i class="bi bi-film me-2"></i>Código del Episodio
+                    </label>
+                    <span class="info-value">{{ selectedEpisode()!.episode }}</span>
+                  </div>
+
+                  <div class="info-group mb-3">
+                    <label class="info-label">
+                      <i class="bi bi-calendar-event me-2"></i>Fecha de Emisión
+                    </label>
+                    <span class="info-value">{{ selectedEpisode()!.air_date }}</span>
+                  </div>
+
+                  <div class="info-group mb-3">
+                    <label class="info-label">
+                      <i class="bi bi-people-fill me-2"></i>Total de Personajes
+                    </label>
+                    <span class="info-value">{{ selectedEpisode()!.characters.length }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="characters-section">
+              <h6 class="mb-3">
+                <i class="bi bi-person-badge me-2"></i>
+                Personajes en este Episodio ({{ selectedEpisode()!.characters.length }})
+              </h6>
+
+              @if (loadingModal()) {
+                <div class="text-center py-3">
+                  <div class="spinner-border spinner-border-sm text-warning" role="status">
+                    <span class="visually-hidden">Cargando personajes...</span>
+                  </div>
+                </div>
+              } @else if (hasCharacters()) {
+                <div class="characters-grid">
+                  @for (character of episodeCharacters(); track character.id) {
+                    <div class="character-mini-card">
+                      <img
+                        [src]="character.image"
+                        [alt]="character.name"
+                        class="character-avatar"
+                      />
+                      <div class="character-info-mini">
+                        <h6 class="character-name-mini">{{ character.name }}</h6>
+                        <div class="character-details-mini">
+                          <span
+                            [class]="
+                              'status-indicator ' + getCharacterStatusClass(character.status)
+                            "
+                          >
+                            {{ getCharacterStatusLabel(character.status) }}
+                          </span>
+                          <span class="character-species">{{ character.species }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="no-characters">
+                  <i class="bi bi-person-x-fill"></i>
+                  <p>Este episodio no tiene personajes registrados</p>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">
+              <i class="bi bi-x-circle me-2"></i>Cerrar
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

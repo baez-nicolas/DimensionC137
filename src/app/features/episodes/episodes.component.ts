@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { Episode } from '../../models';
-import { EpisodeService } from '../../services';
+import { Character, Episode } from '../../models';
+import { CharacterService, EpisodeService } from '../../services';
 
 @Component({
   selector: 'app-episodes',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './episodes.component.html',
   styleUrl: './episodes.component.css',
 })
 export class EpisodesComponent implements OnInit {
   private readonly episodeService = inject(EpisodeService);
+  private readonly characterService = inject(CharacterService);
 
   episodes = signal<Episode[]>([]);
   loading = signal(false);
@@ -21,6 +21,13 @@ export class EpisodesComponent implements OnInit {
   totalPages = signal(1);
   searchName = signal('');
   filterEpisode = signal('');
+
+  showModal = signal(false);
+  selectedEpisode = signal<Episode | null>(null);
+  episodeCharacters = signal<Character[]>([]);
+  loadingModal = signal(false);
+
+  hasCharacters = computed(() => this.episodeCharacters().length > 0);
 
   ngOnInit(): void {
     this.loadEpisodes();
@@ -126,5 +133,82 @@ export class EpisodesComponent implements OnInit {
 
   getSeasonNumber(episode: string): string {
     return episode.substring(1, 3);
+  }
+
+  getEpisodeNumber(episode: string): string {
+    return episode.substring(4, 6);
+  }
+
+  isCurrentPage(page: number): boolean {
+    return this.currentPage() === page;
+  }
+
+  isPaginationDisabled(direction: 'prev' | 'next'): boolean {
+    if (direction === 'prev') return this.currentPage() === 1;
+    return this.currentPage() === this.totalPages();
+  }
+
+  shouldShowEllipsis(pages: number[], index: number): boolean {
+    return pages[index] === -1;
+  }
+
+  openEpisodeModal(episode: Episode): void {
+    this.selectedEpisode.set(episode);
+    this.showModal.set(true);
+    this.loadEpisodeCharacters(episode);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+    setTimeout(() => {
+      this.selectedEpisode.set(null);
+      this.episodeCharacters.set([]);
+    }, 300);
+  }
+
+  loadEpisodeCharacters(episode: Episode): void {
+    if (episode.characters.length === 0) {
+      this.episodeCharacters.set([]);
+      return;
+    }
+
+    this.loadingModal.set(true);
+    const characterIds = episode.characters.map((url) => {
+      const parts = url.split('/');
+      return parseInt(parts[parts.length - 1], 10);
+    });
+
+    this.characterService.getMultiple(characterIds).subscribe({
+      next: (characters) => {
+        this.episodeCharacters.set(Array.isArray(characters) ? characters : [characters]);
+        this.loadingModal.set(false);
+      },
+      error: () => {
+        this.episodeCharacters.set([]);
+        this.loadingModal.set(false);
+      },
+    });
+  }
+
+  getCharacterStatusClass(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'alive':
+        return 'status-alive';
+      case 'dead':
+        return 'status-dead';
+      default:
+        return 'status-unknown';
+    }
+  }
+
+  getCharacterStatusLabel(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'alive':
+        return 'Vivo';
+      case 'dead':
+        return 'Muerto';
+      default:
+        return 'Desconocido';
+    }
   }
 }
