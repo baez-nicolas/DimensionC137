@@ -46,15 +46,55 @@ export class CharactersComponent implements OnInit {
 
     this.characterService.filter(filters).subscribe({
       next: (response) => {
-        this.characters.set(response.results);
-        this.totalPages.set(response.info.pages);
-        this.loading.set(false);
+        setTimeout(() => {
+          this.characters.set(response.results);
+          this.totalPages.set(response.info.pages);
+          this.loading.set(false);
+        }, 1000);
       },
       error: () => {
-        this.characters.set([]);
-        this.loading.set(false);
+        setTimeout(() => {
+          this.characters.set([]);
+          this.loading.set(false);
+        }, 1000);
       },
     });
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const total = this.totalPages();
+    const current = this.currentPage();
+
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (current <= 4) {
+        for (let i = 1; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push(-1);
+        pages.push(total);
+      } else if (current >= total - 3) {
+        pages.push(1);
+        pages.push(-1);
+        for (let i = total - 4; i <= total; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push(-1);
+        for (let i = current - 1; i <= current + 1; i++) {
+          pages.push(i);
+        }
+        pages.push(-1);
+        pages.push(total);
+      }
+    }
+
+    return pages;
   }
 
   onSearch(name: string): void {

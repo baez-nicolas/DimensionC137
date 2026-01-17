@@ -40,29 +40,36 @@
     <div class="row">
       @for (episode of episodes(); track episode.id) {
         <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card h-100 shadow-sm hover-card">
-            <div class="card-header bg-warning">
+          <div class="card h-100 hover-card">
+            <div class="card-header">
               <div class="d-flex justify-content-between align-items-center">
-                <span class="badge bg-dark">{{ episode.episode }}</span>
-                <small class="text-dark">{{ episode.air_date }}</small>
+                <span class="episode-badge">{{ episode.episode }}</span>
+                <small class="air-date">
+                  <i class="bi bi-calendar-event me-1"></i>{{ episode.air_date }}
+                </small>
               </div>
             </div>
             <div class="card-body">
-              <h5 class="card-title">{{ episode.name }}</h5>
-              <p class="card-text mb-2">
-                <strong>Temporada:</strong> {{ getSeasonNumber(episode.episode) }}
-              </p>
-              <p class="card-text mb-2">
-                <strong>Personajes:</strong>
-                <span class="badge bg-warning text-dark">{{ episode.characters.length }}</span>
-              </p>
+              <h5 class="card-title mb-3">
+                <i class="bi bi-play-circle-fill me-2"></i>{{ episode.name }}
+              </h5>
+              <div class="d-flex flex-column gap-3">
+                <div class="info-item">
+                  <strong><i class="bi bi-film me-2"></i>Temporada:</strong>
+                  <span class="info-value">{{ getSeasonNumber(episode.episode) }}</span>
+                </div>
+                <div class="info-item">
+                  <strong><i class="bi bi-people-fill me-2"></i>Personajes:</strong>
+                  <span class="badge-count">{{ episode.characters.length }}</span>
+                </div>
+              </div>
             </div>
             <div class="card-footer bg-transparent">
               <a
                 [routerLink]="['/episodes', episode.id]"
                 class="btn btn-sm btn-outline-warning w-100"
               >
-                Ver Detalles
+                <i class="bi bi-eye-fill me-2"></i>Ver Detalles
               </a>
             </div>
           </div>
@@ -78,11 +85,15 @@
           </button>
         </li>
 
-        @for (page of [1, 2, 3]; track page) {
-          @if (currentPage() - 2 + page > 0 && currentPage() - 2 + page <= totalPages()) {
-            <li class="page-item" [class.active]="currentPage() === currentPage() - 2 + page">
-              <button class="page-link" (click)="goToPage(currentPage() - 2 + page)">
-                {{ currentPage() - 2 + page }}
+        @for (page of getPageNumbers(); track page) {
+          @if (page === -1) {
+            <li class="page-item disabled">
+              <span class="page-link">...</span>
+            </li>
+          } @else {
+            <li class="page-item" [class.active]="currentPage() === page">
+              <button class="page-link" (click)="goToPage(page)">
+                {{ page }}
               </button>
             </li>
           }

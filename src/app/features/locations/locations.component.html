@@ -40,24 +40,34 @@
     <div class="row">
       @for (location of locations(); track location.id) {
         <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card h-100 shadow-sm hover-card">
-            <div class="card-header bg-success text-white">
-              <h5 class="card-title mb-0">{{ location.name }}</h5>
+          <div class="card h-100 hover-card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-geo-alt-fill me-2"></i>{{ location.name }}
+              </h5>
             </div>
             <div class="card-body">
-              <p class="card-text mb-2"><strong>Tipo:</strong> {{ location.type }}</p>
-              <p class="card-text mb-2"><strong>Dimensión:</strong> {{ location.dimension }}</p>
-              <p class="card-text mb-2">
-                <strong>Residentes:</strong>
-                <span class="badge bg-success">{{ location.residents.length }}</span>
-              </p>
+              <div class="d-flex flex-column gap-3">
+                <div class="info-item">
+                  <strong><i class="bi bi-bookmark-fill me-2"></i>Tipo:</strong>
+                  <span class="info-value">{{ location.type }}</span>
+                </div>
+                <div class="info-item">
+                  <strong><i class="bi bi-stars me-2"></i>Dimensión:</strong>
+                  <span class="info-value">{{ location.dimension }}</span>
+                </div>
+                <div class="info-item">
+                  <strong><i class="bi bi-people-fill me-2"></i>Residentes:</strong>
+                  <span class="badge-count">{{ location.residents.length }}</span>
+                </div>
+              </div>
             </div>
             <div class="card-footer bg-transparent">
               <a
                 [routerLink]="['/locations', location.id]"
                 class="btn btn-sm btn-outline-success w-100"
               >
-                Ver Detalles
+                <i class="bi bi-eye-fill me-2"></i>Ver Detalles
               </a>
             </div>
           </div>
@@ -73,11 +83,15 @@
           </button>
         </li>
 
-        @for (page of [1, 2, 3]; track page) {
-          @if (currentPage() - 2 + page > 0 && currentPage() - 2 + page <= totalPages()) {
-            <li class="page-item" [class.active]="currentPage() === currentPage() - 2 + page">
-              <button class="page-link" (click)="goToPage(currentPage() - 2 + page)">
-                {{ currentPage() - 2 + page }}
+        @for (page of getPageNumbers(); track page) {
+          @if (page === -1) {
+            <li class="page-item disabled">
+              <span class="page-link">...</span>
+            </li>
+          } @else {
+            <li class="page-item" [class.active]="currentPage() === page">
+              <button class="page-link" (click)="goToPage(page)">
+                {{ page }}
               </button>
             </li>
           }
