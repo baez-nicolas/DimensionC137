@@ -132,64 +132,55 @@
 
 @if (showModal()) {
   <div class="modal-overlay" (click)="closeModal()">
-    <div class="modal-container-location" (click)="$event.stopPropagation()">
-      <div class="modal-content-location">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-content-custom">
         @if (selectedLocation()) {
-          <div class="modal-header-location">
+          <div class="modal-header">
             <h5 class="modal-title">
               <i [class]="'bi ' + getTypeIcon(selectedLocation()!.type) + ' me-2'"></i>
               {{ selectedLocation()!.name }}
             </h5>
-            <button type="button" class="btn-close-custom" (click)="closeModal()">
-              <i class="bi bi-x-lg"></i>
-            </button>
+            <button type="button" class="btn-close" (click)="closeModal()"></button>
           </div>
 
-          <div class="modal-body-location">
-            <div class="location-details">
-              <div class="detail-card">
-                <div class="detail-icon">
-                  <i class="bi bi-bookmark-fill"></i>
-                </div>
-                <div class="detail-content">
-                  <span class="detail-label">Tipo de Locación</span>
-                  <span class="detail-value">{{ selectedLocation()!.type }}</span>
-                </div>
-              </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="location-info">
+                  <div class="info-group mb-3">
+                    <label class="info-label">
+                      <i class="bi bi-bookmark-fill me-2"></i>Tipo de Locación
+                    </label>
+                    <span class="info-value">{{ selectedLocation()!.type }}</span>
+                  </div>
 
-              <div class="detail-card">
-                <div class="detail-icon">
-                  <i class="bi bi-stars"></i>
-                </div>
-                <div class="detail-content">
-                  <span class="detail-label">Dimensión</span>
-                  <span class="detail-value">{{
-                    selectedLocation()!.dimension || 'Desconocida'
-                  }}</span>
-                </div>
-              </div>
+                  <div class="info-group mb-3">
+                    <label class="info-label"> <i class="bi bi-stars me-2"></i>Dimensión </label>
+                    <span class="info-value">{{
+                      selectedLocation()!.dimension || 'Desconocida'
+                    }}</span>
+                  </div>
 
-              <div class="detail-card">
-                <div class="detail-icon">
-                  <i class="bi bi-people-fill"></i>
-                </div>
-                <div class="detail-content">
-                  <span class="detail-label">Total de Residentes</span>
-                  <span class="detail-value">{{ selectedLocation()!.residents.length }}</span>
+                  <div class="info-group mb-3">
+                    <label class="info-label">
+                      <i class="bi bi-people-fill me-2"></i>Total de Residentes
+                    </label>
+                    <span class="info-value">{{ selectedLocation()!.residents.length }}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <hr class="divider" />
+            <hr class="my-4" />
 
             <div class="residents-section">
-              <h6 class="section-title">
+              <h6 class="mb-3">
                 <i class="bi bi-person-badge me-2"></i>
-                Residentes de esta Locación
+                Residentes de esta Locación ({{ selectedLocation()!.residents.length }})
               </h6>
 
               @if (loadingModal()) {
-                <div class="text-center py-4">
+                <div class="text-center py-3">
                   <div class="spinner-border spinner-border-sm text-success" role="status">
                     <span class="visually-hidden">Cargando residentes...</span>
                   </div>
@@ -228,8 +219,8 @@
             </div>
           </div>
 
-          <div class="modal-footer-location">
-            <button type="button" class="btn-close-modal" (click)="closeModal()">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">
               <i class="bi bi-x-circle me-2"></i>Cerrar
             </button>
           </div>
