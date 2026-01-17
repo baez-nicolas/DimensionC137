@@ -10,16 +10,11 @@
       </div>
     </a>
 
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-    >
+    <button class="navbar-toggler" type="button" (click)="toggleSidebar()">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="navbar-menu d-none d-lg-block">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
           <a
@@ -54,3 +49,62 @@
     </div>
   </div>
 </nav>
+
+@if (isSidebarOpen()) {
+  <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+  <div class="sidebar" [class.open]="isSidebarOpen()">
+    <div class="sidebar-header">
+      <h5 class="sidebar-title"><i class="bi bi-list-ul me-2"></i>Menú</h5>
+      <button class="btn-close-sidebar" (click)="closeSidebar()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+        <a
+          class="sidebar-nav-link"
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeSidebar()"
+        >
+          <i class="bi bi-house-fill"></i>
+          <span>Inicio</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item">
+        <a
+          class="sidebar-nav-link"
+          routerLink="/characters"
+          routerLinkActive="active"
+          (click)="closeSidebar()"
+        >
+          <i class="bi bi-person-badge-fill"></i>
+          <span>Personajes</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item">
+        <a
+          class="sidebar-nav-link"
+          routerLink="/locations"
+          routerLinkActive="active"
+          (click)="closeSidebar()"
+        >
+          <i class="bi bi-geo-alt-fill"></i>
+          <span>Locaciones</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item">
+        <a
+          class="sidebar-nav-link"
+          routerLink="/episodes"
+          routerLinkActive="active"
+          (click)="closeSidebar()"
+        >
+          <i class="bi bi-collection-play-fill"></i>
+          <span>Episodios</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+}
