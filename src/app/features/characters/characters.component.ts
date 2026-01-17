@@ -1,27 +1,55 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { Character } from '../../models';
-import { CharacterService } from '../../services';
+import { Character, Episode } from '../../models';
+import { CharacterService, EpisodeService } from '../../services';
+
+interface FilterConfig {
+  label: string;
+  value: string;
+}
+
+interface StatusConfig extends FilterConfig {
+  cssClass: string;
+}
 
 @Component({
   selector: 'app-characters',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './characters.component.html',
   styleUrl: './characters.component.css',
 })
 export class CharactersComponent implements OnInit {
   private readonly characterService = inject(CharacterService);
+  private readonly episodeService = inject(EpisodeService);
 
   characters = signal<Character[]>([]);
+  selectedCharacter = signal<Character | null>(null);
+  characterEpisodes = signal<string[]>([]);
+  loadingModal = signal(false);
+  showModal = signal(false);
   loading = signal(false);
   currentPage = signal(1);
   totalPages = signal(1);
   searchName = signal('');
   filterStatus = signal('');
   filterGender = signal('');
+
+  readonly statusOptions: StatusConfig[] = [
+    { label: 'Todos los Estados', value: '', cssClass: '' },
+    { label: 'Vivo', value: 'alive', cssClass: 'text-success' },
+    { label: 'Muerto', value: 'dead', cssClass: 'text-danger' },
+    { label: 'Desconocido', value: 'unknown', cssClass: 'text-secondary' },
+  ];
+
+  readonly genderOptions: FilterConfig[] = [
+    { label: 'Todos los Géneros', value: '' },
+    { label: 'Masculino', value: 'male' },
+    { label: 'Femenino', value: 'female' },
+    { label: 'Sin Género', value: 'genderless' },
+    { label: 'Desconocido', value: 'unknown' },
+  ];
 
   ngOnInit(): void {
     this.loadCharacters();
@@ -135,11 +163,72 @@ export class CharactersComponent implements OnInit {
   }
 
   getStatusClass(status: string): string {
-    const classes: Record<string, string> = {
-      Alive: 'text-success',
-      Dead: 'text-danger',
-      unknown: 'text-secondary',
-    };
-    return classes[status] || 'text-secondary';
+    const statusConfig = this.statusOptions.find((s) => s.value === status.toLowerCase());
+    return statusConfig?.cssClass || 'text-secondary';
+  }
+
+  getStatusLabel(status: string): string {
+    const statusConfig = this.statusOptions.find((s) => s.value === status.toLowerCase());
+    return statusConfig?.label || status;
+  }
+
+  getGenderLabel(gender: string): string {
+    const genderConfig = this.genderOptions.find((g) => g.value === gender.toLowerCase());
+    return genderConfig?.label || gender;
+  }
+
+  getCardClasses(character: Character): string {
+    return 'card h-100 hover-card';
+  }
+
+  shouldShowEllipsis(page: number): boolean {
+    return page === -1;
+  }
+
+  isCurrentPage(page: number): boolean {
+    return this.currentPage() === page;
+  }
+
+  isPaginationDisabled(direction: 'prev' | 'next'): boolean {
+    return direction === 'prev'
+      ? this.currentPage() === 1
+      : this.currentPage() === this.totalPages();
+  }
+
+  openCharacterModal(character: Character): void {
+    this.selectedCharacter.set(character);
+    this.loadingModal.set(true);
+    this.characterEpisodes.set([]);
+    this.showModal.set(true);
+
+    const episodeIds = character.episode.map((url) => {
+      const parts = url.split('/');
+      return parseInt(parts[parts.length - 1], 10);
+    });
+
+    if (episodeIds.length > 0) {
+      this.episodeService.getMultiple(episodeIds).subscribe({
+        next: (episodes: Episode | Episode[]) => {
+          const episodeNames = Array.isArray(episodes)
+            ? episodes.map((ep) => `${ep.episode} - ${ep.name}`)
+            : [`${episodes.episode} - ${episodes.name}`];
+          this.characterEpisodes.set(episodeNames);
+          this.loadingModal.set(false);
+        },
+        error: () => {
+          this.loadingModal.set(false);
+        },
+      });
+    } else {
+      this.loadingModal.set(false);
+    }
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+    setTimeout(() => {
+      this.selectedCharacter.set(null);
+      this.characterEpisodes.set([]);
+    }, 300);
   }
 }

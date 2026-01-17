@@ -18,19 +18,16 @@
     </div>
     <div class="col-md-3 mb-3">
       <select class="form-select" (change)="onFilterStatus($any($event.target).value)">
-        <option value="">Todos los Estados</option>
-        <option value="alive">Vivo</option>
-        <option value="dead">Muerto</option>
-        <option value="unknown">Desconocido</option>
+        @for (status of statusOptions; track status.value) {
+          <option [value]="status.value">{{ status.label }}</option>
+        }
       </select>
     </div>
     <div class="col-md-3 mb-3">
       <select class="form-select" (change)="onFilterGender($any($event.target).value)">
-        <option value="">Todos los Géneros</option>
-        <option value="male">Masculino</option>
-        <option value="female">Femenino</option>
-        <option value="genderless">Sin Género</option>
-        <option value="unknown">Desconocido</option>
+        @for (gender of genderOptions; track gender.value) {
+          <option [value]="gender.value">{{ gender.label }}</option>
+        }
       </select>
     </div>
     <div class="col-md-2 mb-3">
@@ -48,7 +45,7 @@
     <div class="row">
       @for (character of characters(); track character.id) {
         <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-          <div class="card h-100 hover-card">
+          <div [class]="getCardClasses(character)">
             <div class="position-relative">
               <img [src]="character.image" [alt]="character.name" class="card-img-top" />
             </div>
@@ -58,7 +55,7 @@
                 <p class="card-text mb-0 d-flex justify-content-between">
                   <strong>Estado:</strong>
                   <span [class]="getStatusClass(character.status)">
-                    {{ character.status }}
+                    {{ getStatusLabel(character.status) }}
                   </span>
                 </p>
                 <p class="card-text mb-0 d-flex justify-content-between">
@@ -67,7 +64,7 @@
                 </p>
                 <p class="card-text mb-0 d-flex justify-content-between">
                   <strong>Género:</strong>
-                  <span>{{ character.gender }}</span>
+                  <span>{{ getGenderLabel(character.gender) }}</span>
                 </p>
                 <p class="card-text mb-0">
                   <strong>Locación:</strong>
@@ -78,12 +75,12 @@
               </div>
             </div>
             <div class="card-footer bg-transparent">
-              <a
-                [routerLink]="['/characters', character.id]"
+              <button
                 class="btn btn-sm btn-outline-primary w-100"
+                (click)="openCharacterModal(character)"
               >
                 <i class="bi bi-eye-fill me-2"></i>Ver Detalles
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -92,19 +89,23 @@
 
     <nav aria-label="Paginación de personajes">
       <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="currentPage() === 1">
-          <button class="page-link" (click)="previousPage()" [disabled]="currentPage() === 1">
+        <li class="page-item" [class.disabled]="isPaginationDisabled('prev')">
+          <button
+            class="page-link"
+            (click)="previousPage()"
+            [disabled]="isPaginationDisabled('prev')"
+          >
             Anterior
           </button>
         </li>
 
         @for (page of getPageNumbers(); track page) {
-          @if (page === -1) {
+          @if (shouldShowEllipsis(page)) {
             <li class="page-item disabled">
               <span class="page-link">...</span>
             </li>
           } @else {
-            <li class="page-item" [class.active]="currentPage() === page">
+            <li class="page-item" [class.active]="isCurrentPage(page)">
               <button class="page-link" (click)="goToPage(page)">
                 {{ page }}
               </button>
@@ -112,12 +113,8 @@
           }
         }
 
-        <li class="page-item" [class.disabled]="currentPage() === totalPages()">
-          <button
-            class="page-link"
-            (click)="nextPage()"
-            [disabled]="currentPage() === totalPages()"
-          >
+        <li class="page-item" [class.disabled]="isPaginationDisabled('next')">
+          <button class="page-link" (click)="nextPage()" [disabled]="isPaginationDisabled('next')">
             Siguiente
           </button>
         </li>
@@ -130,3 +127,104 @@
     </div>
   }
 </div>
+
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-content-custom">
+        @if (selectedCharacter()) {
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-person-circle me-2"></i>{{ selectedCharacter()!.name }}
+            </h5>
+            <button type="button" class="btn-close" (click)="closeModal()"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-5">
+                <img
+                  [src]="selectedCharacter()!.image"
+                  [alt]="selectedCharacter()!.name"
+                  class="img-fluid rounded shadow-lg"
+                />
+              </div>
+              <div class="col-md-7">
+                <div class="character-info">
+                  <div class="info-group mb-3">
+                    <label class="info-label"> <i class="bi bi-activity me-2"></i>Estado </label>
+                    <span [class]="'info-value ' + getStatusClass(selectedCharacter()!.status)">
+                      {{ getStatusLabel(selectedCharacter()!.status) }}
+                    </span>
+                  </div>
+
+                  <div class="info-group mb-3">
+                    <label class="info-label"> <i class="bi bi-bug me-2"></i>Especie </label>
+                    <span class="info-value">{{ selectedCharacter()!.species }}</span>
+                  </div>
+
+                  <div class="info-group mb-3">
+                    <label class="info-label">
+                      <i class="bi bi-gender-ambiguous me-2"></i>Género
+                    </label>
+                    <span class="info-value">{{
+                      getGenderLabel(selectedCharacter()!.gender)
+                    }}</span>
+                  </div>
+
+                  @if (selectedCharacter()!.type) {
+                    <div class="info-group mb-3">
+                      <label class="info-label"> <i class="bi bi-tags me-2"></i>Tipo </label>
+                      <span class="info-value">{{ selectedCharacter()!.type }}</span>
+                    </div>
+                  }
+
+                  <div class="info-group mb-3">
+                    <label class="info-label"> <i class="bi bi-geo-alt me-2"></i>Origen </label>
+                    <span class="info-value">{{ selectedCharacter()!.origin.name }}</span>
+                  </div>
+
+                  <div class="info-group mb-3">
+                    <label class="info-label">
+                      <i class="bi bi-pin-map me-2"></i>Última Locación
+                    </label>
+                    <span class="info-value">{{ selectedCharacter()!.location.name }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="episodes-section">
+              <h6 class="mb-3">
+                <i class="bi bi-collection-play me-2"></i>
+                Apariciones en Episodios ({{ selectedCharacter()!.episode.length }})
+              </h6>
+
+              @if (loadingModal()) {
+                <div class="text-center py-3">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Cargando episodios...</span>
+                  </div>
+                </div>
+              } @else if (characterEpisodes().length > 0) {
+                <div class="episodes-list">
+                  @for (episode of characterEpisodes(); track episode) {
+                    <div class="episode-item">
+                      <i class="bi bi-play-circle me-2"></i>{{ episode }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">
+              <i class="bi bi-x-circle me-2"></i>Cerrar
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
