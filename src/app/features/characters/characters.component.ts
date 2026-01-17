@@ -200,6 +200,7 @@ export class CharactersComponent implements OnInit {
     this.loadingModal.set(true);
     this.characterEpisodes.set([]);
     this.showModal.set(true);
+    document.body.style.overflow = 'hidden';
 
     const episodeIds = character.episode.map((url) => {
       const parts = url.split('/');
@@ -226,6 +227,7 @@ export class CharactersComponent implements OnInit {
 
   closeModal(): void {
     this.showModal.set(false);
+    document.body.style.overflow = '';
     setTimeout(() => {
       this.selectedCharacter.set(null);
       this.characterEpisodes.set([]);

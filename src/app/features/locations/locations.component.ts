@@ -224,11 +224,13 @@ export class LocationsComponent implements OnInit {
   openLocationModal(location: Location): void {
     this.selectedLocation.set(location);
     this.showModal.set(true);
+    document.body.style.overflow = 'hidden';
     this.loadLocationCharacters(location);
   }
 
   closeModal(): void {
     this.showModal.set(false);
+    document.body.style.overflow = '';
     setTimeout(() => {
       this.selectedLocation.set(null);
       this.locationCharacters.set([]);

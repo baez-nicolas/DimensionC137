@@ -49,3 +49,70 @@ main {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+@media (max-width: 767px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  h1.display-4,
+  h1.display-5 {
+    font-size: 2rem !important;
+  }
+
+  .display-md-4 {
+    font-size: 2rem !important;
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.1rem !important;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 1rem;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+  }
+
+  .pagination {
+    font-size: 0.85rem;
+  }
+
+  .pagination .page-link {
+    padding: 0.4rem 0.65rem;
+  }
+
+  .pagination .page-item:first-child .page-link,
+  .pagination .page-item:last-child .page-link {
+    padding: 0.4rem 0.5rem;
+    min-width: 38px;
+  }
+
+  .pagination .bi-chevron-left,
+  .pagination .bi-chevron-right {
+    font-size: 1rem;
+  }
+
+  .row > [class*='col-'] {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .display-md-4 {
+    font-size: 3.5rem !important;
+  }
+}

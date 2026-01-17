@@ -155,11 +155,13 @@ export class EpisodesComponent implements OnInit {
   openEpisodeModal(episode: Episode): void {
     this.selectedEpisode.set(episode);
     this.showModal.set(true);
+    document.body.style.overflow = 'hidden';
     this.loadEpisodeCharacters(episode);
   }
 
   closeModal(): void {
     this.showModal.set(false);
+    document.body.style.overflow = '';
     setTimeout(() => {
       this.selectedEpisode.set(null);
       this.episodeCharacters.set([]);

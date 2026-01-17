@@ -1,13 +1,15 @@
 <div class="container py-4">
   <div class="row mb-4">
-    <div class="col">
-      <h1 class="display-4 fw-bold text-warning">Episodios</h1>
+    <div class="col text-center text-md-start">
+      <h1 class="display-5 display-md-4 fw-bold text-warning">
+        <i class="bi bi-tv-fill me-2 me-md-3"></i>Episodios
+      </h1>
       <p class="lead">Navega por todos los episodios de Rick y Morty</p>
     </div>
   </div>
 
   <div class="row mb-4">
-    <div class="col-md-8 mb-3">
+    <div class="col-12 col-md-8 mb-3">
       <input
         type="text"
         class="form-control"
@@ -16,7 +18,7 @@
         [value]="searchName()"
       />
     </div>
-    <div class="col-md-4 mb-3">
+    <div class="col-12 col-md-4 mb-3">
       <input
         type="text"
         class="form-control"
@@ -36,7 +38,7 @@
   } @else if (episodes().length > 0) {
     <div class="row">
       @for (episode of episodes(); track episode.id) {
-        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="col-6 col-md-6 col-lg-4 mb-4">
           <div class="card h-100 episode-card">
             <div class="card-body text-center">
               <h5 class="card-title mb-3">
@@ -72,7 +74,8 @@
       <ul class="pagination justify-content-center">
         <li class="page-item" [class.disabled]="currentPage() === 1">
           <button class="page-link" (click)="previousPage()" [disabled]="currentPage() === 1">
-            Anterior
+            <span class="d-none d-md-inline">Anterior</span>
+            <i class="bi bi-chevron-left d-md-none"></i>
           </button>
         </li>
 
@@ -96,7 +99,8 @@
             (click)="nextPage()"
             [disabled]="currentPage() === totalPages()"
           >
-            Siguiente
+            <span class="d-none d-md-inline">Siguiente</span>
+            <i class="bi bi-chevron-right d-md-none"></i>
           </button>
         </li>
       </ul>

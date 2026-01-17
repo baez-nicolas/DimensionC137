@@ -1,13 +1,15 @@
 <div class="container py-4">
   <div class="row mb-4">
-    <div class="col">
-      <h1 class="display-4 fw-bold text-primary">Personajes</h1>
+    <div class="col text-center text-md-start">
+      <h1 class="display-5 display-md-4 fw-bold text-primary">
+        <i class="bi bi-people-fill me-2 me-md-3"></i>Personajes
+      </h1>
       <p class="lead">Explora el multiverso de personajes de Rick y Morty</p>
     </div>
   </div>
 
   <div class="row mb-4">
-    <div class="col-md-6 mb-3">
+    <div class="col-12 col-md-6 mb-3">
       <input
         type="text"
         class="form-control"
@@ -16,14 +18,14 @@
         (input)="onSearch($any($event.target).value)"
       />
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-6 col-md-3 mb-3">
       <select class="form-select" (change)="onFilterStatus($any($event.target).value)">
         @for (status of statusOptions; track status.value) {
           <option [value]="status.value">{{ status.label }}</option>
         }
       </select>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-6 col-md-3 mb-3">
       <select class="form-select" (change)="onFilterGender($any($event.target).value)">
         @for (gender of genderOptions; track gender.value) {
           <option [value]="gender.value">{{ gender.label }}</option>
@@ -41,7 +43,7 @@
   } @else if (characters().length > 0) {
     <div class="row">
       @for (character of characters(); track character.id) {
-        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+        <div class="col-6 col-md-6 col-lg-4 col-xl-3 mb-4">
           <div [class]="getCardClasses(character)">
             <div class="position-relative">
               <img [src]="character.image" [alt]="character.name" class="card-img-top" />
@@ -93,7 +95,8 @@
             (click)="previousPage()"
             [disabled]="isPaginationDisabled('prev')"
           >
-            Anterior
+            <span class="d-none d-md-inline">Anterior</span>
+            <i class="bi bi-chevron-left d-md-none"></i>
           </button>
         </li>
 
@@ -113,7 +116,8 @@
 
         <li class="page-item" [class.disabled]="isPaginationDisabled('next')">
           <button class="page-link" (click)="nextPage()" [disabled]="isPaginationDisabled('next')">
-            Siguiente
+            <span class="d-none d-md-inline">Siguiente</span>
+            <i class="bi bi-chevron-right d-md-none"></i>
           </button>
         </li>
       </ul>

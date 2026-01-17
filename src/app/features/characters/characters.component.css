@@ -529,3 +529,36 @@
     transform: translateX(8px) scale(1.2);
   }
 }
+
+@media (max-width: 767px) {
+  .card-img-top {
+    height: 180px;
+  }
+
+  .card-body {
+    padding: 0.75rem !important;
+  }
+
+  .card-title {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .card-text {
+    font-size: 0.8rem !important;
+  }
+
+  .card-footer {
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .btn-outline-primary,
+  .btn-detail-custom {
+    font-size: 0.75rem !important;
+    padding: 0.4rem 0.8rem !important;
+  }
+
+  .hover-card:hover {
+    transform: translateY(-4px) scale(1.01) !important;
+  }
+}

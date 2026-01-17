@@ -89,6 +89,39 @@
   box-shadow: 0 20px 40px rgba(4, 120, 87, 0.3) !important;
 }
 
+@media (max-width: 767px) {
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  .card-title {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-title i {
+    font-size: 0.85rem;
+  }
+
+  .info-item {
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .info-item strong {
+    font-size: 0.75rem;
+  }
+
+  .btn-detail-custom {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .location-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
 .card-body {
   position: relative;
   z-index: 2;
@@ -656,5 +689,56 @@
   }
   50% {
     transform: translateX(8px) scale(1.2);
+  }
+}
+
+@media (max-width: 767px) {
+  .card-body {
+    padding: 0.75rem !important;
+  }
+
+  .card-title {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .card-title i {
+    font-size: 0.8rem !important;
+  }
+
+  .card-text {
+    font-size: 0.75rem !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.25rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .card-text strong {
+    font-size: 0.7rem !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .card-text span {
+    font-size: 0.75rem !important;
+    padding-left: 1.5rem !important;
+  }
+
+  .badge-residents {
+    padding-left: 1.5rem !important;
+  }
+
+  .btn-detail-custom {
+    font-size: 0.7rem !important;
+    padding: 0.4rem 0.6rem !important;
+  }
+
+  .card-footer {
+    padding: 0.5rem !important;
+  }
+
+  .location-card:hover {
+    transform: translateY(-4px) scale(1.01) !important;
   }
 }
