@@ -7,13 +7,13 @@
   </div>
 
   <div class="row mb-4">
-    <div class="col-md-4 mb-3">
+    <div class="col-md-6 mb-3">
       <input
         type="text"
         class="form-control"
         placeholder="Buscar por nombre..."
-        #searchInput
-        (keyup.enter)="onSearch(searchInput.value)"
+        [value]="searchName()"
+        (input)="onSearch($any($event.target).value)"
       />
     </div>
     <div class="col-md-3 mb-3">
@@ -29,9 +29,6 @@
           <option [value]="gender.value">{{ gender.label }}</option>
         }
       </select>
-    </div>
-    <div class="col-md-2 mb-3">
-      <button class="btn btn-primary w-100" (click)="onSearch(searchInput.value)">Buscar</button>
     </div>
   </div>
 
@@ -75,11 +72,12 @@
               </div>
             </div>
             <div class="card-footer bg-transparent">
-              <button
-                class="btn btn-sm btn-outline-primary w-100"
-                (click)="openCharacterModal(character)"
-              >
-                <i class="bi bi-eye-fill me-2"></i>Ver Detalles
+              <button class="btn-detail-custom w-100" (click)="openCharacterModal(character)">
+                <span class="btn-content">
+                  <i class="bi bi-info-circle-fill me-2"></i>
+                  Detalles
+                </span>
+                <i class="bi bi-arrow-right-circle btn-arrow"></i>
               </button>
             </div>
           </div>

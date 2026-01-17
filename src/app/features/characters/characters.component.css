@@ -455,3 +455,77 @@
 .character-info {
   padding: 0;
 }
+
+.btn-detail-custom {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-detail-custom::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-detail-custom:hover::before {
+  left: 100%;
+}
+
+.btn-detail-custom:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.btn-detail-custom:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-detail-custom:hover .btn-arrow {
+  transform: translateX(5px) rotate(0deg);
+  animation: pulse-arrow 0.6s ease-in-out;
+}
+
+@keyframes pulse-arrow {
+  0%,
+  100% {
+    transform: translateX(5px) scale(1);
+  }
+  50% {
+    transform: translateX(8px) scale(1.2);
+  }
+}
