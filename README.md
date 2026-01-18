@@ -5,6 +5,8 @@
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
+<img src="/img/logo1.png" width="400" alt="Banner" />
+
 **DimensionC137** es una aplicación web que te permite explorar el multiverso de Rick and Morty. Descubrí personajes, locaciones y episodios de todas las dimensiones con una interfaz moderna y responsive.
 
 🌐 **[Ver Demo en Vivo](https://dimension-c137-beta.vercel.app/)**
