@@ -166,7 +166,7 @@ Los archivos compilados estarán en `dist/DimensionC137/browser/`
 
 <div align="center">
 
-**[⬆ Volver arriba](#-dimensionc137)**
+**[⬆ Volver arriba](#-dimensionc-137)**
 
 Hecho con ❤️ y 🛸
 
