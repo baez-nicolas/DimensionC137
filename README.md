@@ -127,28 +127,6 @@ Los archivos compilados estarán en `dist/DimensionC137/browser/`
 
 ---
 
-## 🎯 Funcionalidades Destacadas
-
-### Sistema de Búsqueda y Filtros
-- Búsqueda en tiempo real con debounce
-- Filtros combinados (nombre + status + gender)
-- Reset de filtros con un click
-- Feedback visual de resultados
-
-### Navegación Intuitiva
-- Paginación con botones prev/next
-- Indicador de página actual
-- Scroll automático al cambiar de página
-- Rutas dinámicas para detalles
-
-### Optimización de Performance
-- Lazy loading de componentes
-- Signals para reactividad eficiente
-- HttpClient con RxJS observables
-- Build optimizado para producción
-
----
-
 ## 🙏 Créditos
 
 - **API:** [The Rick and Morty API](https://rickandmortyapi.com) - Creada por [Axel Fuhrmann](https://github.com/afuh)
