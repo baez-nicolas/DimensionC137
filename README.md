@@ -95,13 +95,6 @@ npm start
 http://localhost:4200
 ```
 
-5. **Build de producción**
-```bash
-ng build
-```
-
-Los archivos compilados estarán en `dist/DimensionC137/browser/`
-
 ## 🎨 Características Técnicas
 
 ### Arquitectura
