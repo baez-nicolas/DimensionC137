@@ -124,6 +124,8 @@ http://localhost:4200
 
 - **API:** [The Rick and Morty API](https://rickandmortyapi.com) - Creada por [Axel Fuhrmann](https://github.com/afuh)
 
+<img src="/img/portada1.jpg" width="600" alt="Banner" />
+
 ---
 
 ## 👨‍💻 Autor
