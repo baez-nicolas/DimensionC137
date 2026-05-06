@@ -9,7 +9,7 @@
 
 **Dimension C-137** es una aplicación web que te permite explorar el multiverso de Rick and Morty. Descubrí personajes, locaciones y episodios de todas las dimensiones con una interfaz moderna y responsive.
 
-🌐 **[Ver Demo en Vivo](https://dimension-c137-beta.vercel.app/)**
+🌐 **[Ver Demo en Vivo](https://dimension-c137-tan.vercel.app/)**
 
 ---
 
@@ -135,7 +135,7 @@ http://localhost:4200
 - GitHub: [@baez-nicolas](https://github.com/baez-nicolas)
 - LinkedIn: [linkedin.com/in/baez-nicolas](https://www.linkedin.com/in/baez-nicolas/)
 - Proyecto: [DimensionC137](https://github.com/baez-nicolas/DimensionC137)
-- Demo: [dimension-c137-beta.vercel.app](https://dimension-c137-beta.vercel.app/)
+- Demo: [dimension-c137-beta.vercel.app](https://dimension-c137-tan.vercel.app/)
 
 ---
 
