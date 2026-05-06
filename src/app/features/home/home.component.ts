@@ -39,10 +39,9 @@ export class HomeComponent implements OnInit {
   }
 
   private loadFeaturedCharacters(): void {
-    this.characterService.getAll(1).subscribe({
-      next: (response: ApiResponse<Character>) => {
-        const featured = response.results.slice(0, 8);
-        this.featuredCharacters.set(featured);
+    this.characterService.getMultiple([1, 2, 3, 4, 5, 8, 118, 165]).subscribe({
+      next: (characters: Character[]) => {
+        this.featuredCharacters.set(characters);
       },
       error: (error: Error) => {
         console.error('Error loading featured characters:', error);

@@ -1,5 +1,4 @@
-<div class="container py-4">
-  
+﻿<div class="container py-4">
   <div class="row mb-4">
     <div class="col text-center text-md-start">
       <h1 class="display-5 fw-bold episode-title">
@@ -7,7 +6,6 @@
       </h1>
       <p class="lead">Explora todos los episodios de Rick y Morty</p>
 
-      
       <div class="d-md-none mt-3">
         <button class="btn-filters-mobile" (click)="openFilterModal()">
           <i class="bi bi-funnel-fill me-2"></i>
@@ -22,7 +20,6 @@
     </div>
   </div>
 
-  
   <div class="desktop-filters d-none d-md-block">
     <div class="row mb-4">
       <div class="col-12">
@@ -61,7 +58,6 @@
     }
   </div>
 
-  
   @if (loading()) {
     <div class="text-center py-5">
       <div class="spinner-border text-warning" role="status">
@@ -71,26 +67,22 @@
   } @else if (episodes().length > 0) {
     <div class="row">
       @for (episode of episodes(); track episode.id) {
-        <div class="col-4 col-md-6 col-lg-4 col-xl-3 mb-4">
-          <div class="episode-hover-card" (click)="openEpisodeModal(episode)">
-            
+        <div class="col-4 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex">
+          <div class="episode-hover-card w-100" (click)="openEpisodeModal(episode)">
             <div class="episode-icon-area d-none d-md-flex">
               <i class="bi bi-play-circle-fill episode-main-icon"></i>
               <div class="episode-chars-badge">{{ episode.characters.length }}</div>
             </div>
 
-            
             <div class="episode-icon-area-mobile d-md-none">
               <i class="bi bi-play-circle-fill episode-main-icon-mobile"></i>
               <div class="episode-season-badge-mobile">{{ getSeasonLabel(episode.episode) }}</div>
             </div>
 
-            
             <div class="episode-name-mobile d-md-none">
               <span>{{ episode.name }}</span>
             </div>
 
-            
             <div class="episode-card-body d-none d-md-block">
               <h5 class="episode-card-title">{{ episode.name }}</h5>
               <div class="episode-card-details">
@@ -99,7 +91,7 @@
                   <span>{{ episode.episode }}</span>
                 </div>
                 <div class="episode-detail-row">
-                  <strong>EmisiÃ³n:</strong>
+                  <strong>Emisión:</strong>
                   <span>{{ episode.air_date }}</span>
                 </div>
                 <div class="episode-detail-row">
@@ -124,7 +116,7 @@
   } @else {
     <div class="alert alert-info text-center" role="alert">
       <h4 class="alert-heading">No se encontraron episodios</h4>
-      <p>Intenta ajustar los filtros de bÃºsqueda</p>
+      <p>Intenta ajustar los filtros de búsqueda</p>
     </div>
   }
 </div>
@@ -142,14 +134,13 @@
           </div>
 
           <div class="modal-body">
-            
             <div class="episode-info-grid">
               <div class="info-group">
-                <label class="info-label"><i class="bi bi-film me-2"></i>CÃ³digo</label>
+                <label class="info-label"><i class="bi bi-film me-2"></i>Código</label>
                 <span class="info-value">{{ selectedEpisode()!.episode }}</span>
               </div>
               <div class="info-group">
-                <label class="info-label"><i class="bi bi-calendar-event me-2"></i>EmisiÃ³n</label>
+                <label class="info-label"><i class="bi bi-calendar-event me-2"></i>Emisión</label>
                 <span class="info-value">{{ selectedEpisode()!.air_date }}</span>
               </div>
               <div class="info-group">
@@ -160,7 +151,6 @@
 
             <hr class="my-4" />
 
-            
             <div class="characters-section">
               <h6 class="characters-heading">
                 <i class="bi bi-person-badge me-2"></i>
@@ -287,7 +277,9 @@
                 <span class="info-value">{{ selectedEpisode()!.episode }}</span>
               </div>
               <div class="info-group">
-                <label class="info-label"><i class="bi bi-calendar-event me-2"></i>Emisión</label>
+                <label class="info-label"
+                  ><i class="bi bi-calendar-event me-2"></i>Emisión</label
+                >
                 <span class="info-value">{{ selectedEpisode()!.air_date }}</span>
               </div>
               <div class="info-group">
