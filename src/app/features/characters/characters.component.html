@@ -6,7 +6,6 @@
       </h1>
       <p class="lead">Explora el multiverso de personajes de Rick y Morty</p>
 
-      
       <div class="d-md-none mt-3">
         <button class="btn-filters-mobile" (click)="openFilterModal()">
           <i class="bi bi-funnel-fill me-2"></i>
@@ -25,7 +24,6 @@
     </div>
   </div>
 
-  
   <div class="desktop-filters d-none d-md-block">
     <div class="row mb-4">
       <div class="col-12">
@@ -109,8 +107,14 @@
       @for (character of characters(); track character.id) {
         <div class="col-4 col-md-6 col-lg-4 col-xl-3 mb-4">
           <div [class]="getCardClasses(character)" (click)="openCharacterModal(character)">
-            <div class="position-relative">
-              <img [src]="character.image" [alt]="character.name" class="card-img-top" />
+            <div class="position-relative img-wrapper">
+              <div class="img-skeleton"></div>
+              <img
+                [src]="character.image"
+                [alt]="character.name"
+                class="card-img-top"
+                loading="lazy"
+              />
             </div>
             <div class="character-name-mobile">
               <span>{{ character.name }}</span>
