@@ -7,7 +7,7 @@
 
 <img src="/img/dimensionc137Portada.png" width="600" alt="Banner" />
 
-**Dimension C-137** es una aplicación web que te permite explorar el multiverso de Rick and Morty. Descubrí personajes, locaciones y episodios de todas las dimensiones con una interfaz moderna y responsive.
+**Dimensión C-137** es una aplicación web que te permite explorar el multiverso de Rick and Morty. Descubrí personajes, locaciones y episodios de todas las dimensiones con una interfaz moderna y responsive.
 
 🌐 **[Ver Demo en Vivo](https://dimension-c137-tan.vercel.app/)**
 
