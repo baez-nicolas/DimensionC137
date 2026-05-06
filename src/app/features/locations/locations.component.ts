@@ -1,21 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { Character, Location } from '../../models';
 import { CharacterService, LocationService } from '../../services';
 
-interface LocationCardConfig {
-  icon: string;
+interface FilterOption {
   label: string;
-  value: string | number;
-  cssClass: string;
-}
-
-interface LocationTypeConfig {
   value: string;
-  label: string;
-  icon: string;
-  color: string;
 }
 
 @Component({
@@ -25,212 +17,170 @@ interface LocationTypeConfig {
   templateUrl: './locations.component.html',
   styleUrl: './locations.component.css',
 })
-export class LocationsComponent implements OnInit {
+export class LocationsComponent implements OnInit, OnDestroy {
   private readonly locationService = inject(LocationService);
   private readonly characterService = inject(CharacterService);
 
+  allLocations = signal<Location[]>([]);
   locations = signal<Location[]>([]);
   loading = signal(false);
-  currentPage = signal(1);
-  totalPages = signal(1);
   searchName = signal('');
   filterType = signal('');
+  filterDimension = signal('');
 
   showModal = signal(false);
   selectedLocation = signal<Location | null>(null);
   locationCharacters = signal<Character[]>([]);
   loadingModal = signal(false);
+  showScrollButton = signal(false);
+  isScrollingUp = signal(false);
+  lastScrollTop = signal(0);
+  showFilterModal = signal(false);
 
-  locationTypes: LocationTypeConfig[] = [
-    { value: '', label: 'Todos los tipos', icon: 'bi-globe', color: 'primary' },
-    { value: 'Planet', label: 'Planeta', icon: 'bi-globe2', color: 'success' },
-    { value: 'Cluster', label: 'Cúmulo', icon: 'bi-stars', color: 'warning' },
-    { value: 'Space station', label: 'Estación Espacial', icon: 'bi-rocket', color: 'info' },
-    { value: 'Microverse', label: 'Microverso', icon: 'bi-gem', color: 'danger' },
-    { value: 'TV', label: 'TV', icon: 'bi-tv', color: 'secondary' },
-    { value: 'Resort', label: 'Resort', icon: 'bi-sun', color: 'warning' },
-    { value: 'Fantasy town', label: 'Ciudad Fantástica', icon: 'bi-magic', color: 'primary' },
-    { value: 'Dream', label: 'Sueño', icon: 'bi-cloud', color: 'info' },
-  ];
-
-  filteredTypeOptions = computed(() => {
-    return this.locationTypes.filter(
-      (type) => type.value === '' || this.locations().some((loc) => loc.type === type.value),
-    );
-  });
+  typeOptions = signal<FilterOption[]>([{ label: 'Todos los Tipos', value: '' }]);
+  dimensionOptions = signal<FilterOption[]>([{ label: 'Todas las Dimensiones', value: '' }]);
 
   hasResidents = computed(() => {
     const location = this.selectedLocation();
     return location && location.residents.length > 0;
   });
 
+  hasActiveFilters = computed(() => {
+    return this.searchName() !== '' || this.filterType() !== '' || this.filterDimension() !== '';
+  });
+
+  private scrollHandler = this.handleScroll.bind(this);
+
   ngOnInit(): void {
-    this.loadLocations();
+    this.loadAllLocations();
+    window.addEventListener('scroll', this.scrollHandler);
   }
 
-  loadLocations(): void {
+  ngOnDestroy(): void {
+    window.removeEventListener('scroll', this.scrollHandler);
+  }
+
+  loadAllLocations(): void {
     this.loading.set(true);
 
-    const filters: any = {
-      page: this.currentPage(),
-    };
+    this.locationService.getAll(1).subscribe({
+      next: (firstResponse) => {
+        const totalPages = firstResponse.info.pages;
+        const requests = [this.locationService.getAll(1)];
 
-    if (this.searchName()) {
-      filters.name = this.searchName();
-    }
-    if (this.filterType()) {
-      filters.type = this.filterType();
-    }
+        for (let page = 2; page <= totalPages; page++) {
+          requests.push(this.locationService.getAll(page));
+        }
 
-    this.locationService.filter(filters).subscribe({
-      next: (response) => {
-        setTimeout(() => {
-          this.locations.set(response.results);
-          this.totalPages.set(response.info.pages);
-          this.loading.set(false);
-        }, 1000);
+        forkJoin(requests).subscribe({
+          next: (responses) => {
+            const all: Location[] = [];
+            responses.forEach((r) => all.push(...r.results));
+            this.allLocations.set(all);
+            this.extractFilterOptions(all);
+            this.applyLocalFilters();
+            this.loading.set(false);
+          },
+          error: () => {
+            this.allLocations.set([]);
+            this.locations.set([]);
+            this.loading.set(false);
+          },
+        });
       },
       error: () => {
-        setTimeout(() => {
-          this.locations.set([]);
-          this.loading.set(false);
-        }, 1000);
+        this.allLocations.set([]);
+        this.locations.set([]);
+        this.loading.set(false);
       },
     });
   }
 
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    const total = this.totalPages();
-    const current = this.currentPage();
+  extractFilterOptions(locations: Location[]): void {
+    const types = new Set<string>();
+    const dimensions = new Set<string>();
 
-    if (total <= 7) {
-      for (let i = 1; i <= total; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (current <= 4) {
-        for (let i = 1; i <= 5; i++) {
-          pages.push(i);
-        }
-        pages.push(-1);
-        pages.push(total);
-      } else if (current >= total - 3) {
-        pages.push(1);
-        pages.push(-1);
-        for (let i = total - 4; i <= total; i++) {
-          pages.push(i);
-        }
-      } else {
-        pages.push(1);
-        pages.push(-1);
-        for (let i = current - 1; i <= current + 1; i++) {
-          pages.push(i);
-        }
-        pages.push(-1);
-        pages.push(total);
-      }
+    locations.forEach((loc) => {
+      if (loc.type && loc.type !== 'unknown') types.add(loc.type);
+      if (loc.dimension && loc.dimension !== 'unknown') dimensions.add(loc.dimension);
+    });
+
+    const typeOpts: FilterOption[] = [{ label: 'Todos los Tipos', value: '' }];
+    Array.from(types)
+      .sort()
+      .forEach((t) => typeOpts.push({ label: t, value: t }));
+    this.typeOptions.set(typeOpts);
+
+    const dimOpts: FilterOption[] = [{ label: 'Todas las Dimensiones', value: '' }];
+    Array.from(dimensions)
+      .sort()
+      .forEach((d) => dimOpts.push({ label: d, value: d }));
+    this.dimensionOptions.set(dimOpts);
+  }
+
+  private applyLocalFilters(): void {
+    let filtered = [...this.allLocations()];
+
+    if (this.searchName()) {
+      const s = this.searchName().toLowerCase();
+      filtered = filtered.filter((loc) => loc.name.toLowerCase().includes(s));
+    }
+    if (this.filterType()) {
+      filtered = filtered.filter((loc) => loc.type === this.filterType());
+    }
+    if (this.filterDimension()) {
+      filtered = filtered.filter((loc) => loc.dimension === this.filterDimension());
     }
 
-    return pages;
+    this.locations.set(filtered);
   }
 
   onSearch(name: string): void {
     this.searchName.set(name);
-    this.currentPage.set(1);
-    this.loadLocations();
+    this.applyLocalFilters();
   }
 
   onFilterType(type: string): void {
     this.filterType.set(type);
-    this.currentPage.set(1);
-    this.loadLocations();
+    this.applyLocalFilters();
   }
 
-  nextPage(): void {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update((page) => page + 1);
-      this.loadLocations();
-    }
+  onFilterDimension(dimension: string): void {
+    this.filterDimension.set(dimension);
+    this.applyLocalFilters();
   }
 
-  previousPage(): void {
-    if (this.currentPage() > 1) {
-      this.currentPage.update((page) => page - 1);
-      this.loadLocations();
-    }
+  clearFilters(): void {
+    this.searchName.set('');
+    this.filterType.set('');
+    this.filterDimension.set('');
+    this.applyLocalFilters();
   }
 
-  goToPage(page: number): void {
-    this.currentPage.set(page);
-    this.loadLocations();
+  openFilterModal(): void {
+    this.showFilterModal.set(true);
+    document.body.classList.add('modal-open');
   }
 
-  getLocationCardInfo(location: Location): LocationCardConfig[] {
-    return [
-      {
-        icon: 'bi-bookmark-fill',
-        label: 'Tipo',
-        value: location.type,
-        cssClass: 'type-badge',
-      },
-      {
-        icon: 'bi-stars',
-        label: 'Dimensión',
-        value: location.dimension || 'Desconocida',
-        cssClass: 'dimension-badge',
-      },
-      {
-        icon: 'bi-people-fill',
-        label: 'Residentes',
-        value: location.residents.length,
-        cssClass: 'residents-badge',
-      },
-    ];
+  closeFilterModal(): void {
+    this.showFilterModal.set(false);
+    document.body.classList.remove('modal-open');
   }
 
-  getTypeIcon(type: string): string {
-    const typeConfig = this.locationTypes.find((t) => t.value === type);
-    return typeConfig ? typeConfig.icon : 'bi-geo-alt';
-  }
-
-  getTypeColor(type: string): string {
-    const typeConfig = this.locationTypes.find((t) => t.value === type);
-    return typeConfig ? typeConfig.color : 'primary';
-  }
-
-  getCardGradient(index: number): string {
-    const gradients = [
-      'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-      'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
-      'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-      'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-    ];
-    return gradients[index % gradients.length];
-  }
-
-  isCurrentPage(page: number): boolean {
-    return this.currentPage() === page;
-  }
-
-  isPaginationDisabled(): boolean {
-    return this.loading() || this.totalPages() <= 1;
-  }
-
-  shouldShowEllipsis(page: number): boolean {
-    return page === -1;
+  applyFiltersAndClose(): void {
+    this.closeFilterModal();
   }
 
   openLocationModal(location: Location): void {
     this.selectedLocation.set(location);
     this.showModal.set(true);
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
     this.loadLocationCharacters(location);
   }
 
   closeModal(): void {
     this.showModal.set(false);
-    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
     setTimeout(() => {
       this.selectedLocation.set(null);
       this.locationCharacters.set([]);
@@ -277,5 +227,28 @@ export class LocationsComponent implements OnInit {
       unknown: 'Desconocido',
     };
     return statusMap[status] || 'Desconocido';
+  }
+
+  handleScroll(): void {
+    const scrollTop = window.scrollY;
+    const lastScroll = this.lastScrollTop();
+
+    this.showScrollButton.set(scrollTop > 300);
+
+    if (scrollTop > lastScroll) {
+      this.isScrollingUp.set(false);
+    } else if (scrollTop < lastScroll) {
+      this.isScrollingUp.set(true);
+    }
+
+    this.lastScrollTop.set(scrollTop);
+  }
+
+  scrollToPosition(): void {
+    if (this.isScrollingUp()) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    }
   }
 }

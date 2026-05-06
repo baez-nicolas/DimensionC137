@@ -127,6 +127,51 @@
   }
 }
 
+@media (max-width: 768px) {
+  .navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  .brand-logo {
+    display: none;
+  }
+
+  .navbar-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+  }
+
+  .brand-wrapper {
+    justify-content: center;
+  }
+
+  .brand-text {
+    text-align: center;
+  }
+
+  .navbar-toggler {
+    width: 40px;
+    height: 40px;
+    padding: 0.4rem;
+    border-width: 2px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navbar-toggler-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
 .sidebar-overlay {
   position: fixed;
   top: 0;

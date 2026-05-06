@@ -1,38 +1,78 @@
 <div class="container py-4">
+  
   <div class="row mb-4">
     <div class="col text-center text-md-start">
-      <h1 class="display-5 display-md-4 fw-bold location-title">
-        <i class="bi bi-globe2 me-2 me-md-3"></i>Locaciones del Multiverso
+      <h1 class="display-5 fw-bold location-title">
+        <i class="bi bi-globe2 me-2 me-md-3 d-none d-md-inline"></i>Locaciones del Multiverso
       </h1>
-      <p class="lead text-muted">Explora las infinitas dimensiones de Rick y Morty</p>
+      <p class="lead">Explora las infinitas dimensiones de Rick y Morty</p>
+
+      
+      <div class="d-md-none mt-3">
+        <button class="btn-filters-mobile" (click)="openFilterModal()">
+          <i class="bi bi-funnel-fill me-2"></i>
+          Filtros
+          @if (hasActiveFilters()) {
+            <span class="filter-badge-inline">{{
+              (searchName() ? 1 : 0) + (filterType() ? 1 : 0) + (filterDimension() ? 1 : 0)
+            }}</span>
+          }
+        </button>
+      </div>
     </div>
   </div>
 
-  <div class="row mb-4">
-    <div class="col-12 col-md-8 mb-3">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Buscar por nombre..."
-        [value]="searchName()"
-        (input)="onSearch($any($event.target).value)"
-      />
+  
+  <div class="desktop-filters d-none d-md-block">
+    <div class="row mb-4">
+      <div class="col-12">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar por nombre..."
+          [value]="searchName()"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
     </div>
-    <div class="col-12 col-md-4 mb-3">
-      <select
-        class="form-select"
-        [value]="filterType()"
-        (change)="onFilterType($any($event.target).value)"
-      >
-        @for (type of locationTypes; track type.value) {
-          <option [value]="type.value">
-            {{ type.label }}
-          </option>
-        }
-      </select>
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <select
+          class="form-select"
+          [value]="filterType()"
+          (change)="onFilterType($any($event.target).value)"
+        >
+          @for (opt of typeOptions(); track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-6 mb-3">
+        <select
+          class="form-select"
+          [value]="filterDimension()"
+          (change)="onFilterDimension($any($event.target).value)"
+        >
+          @for (opt of dimensionOptions(); track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
     </div>
+
+    @if (hasActiveFilters()) {
+      <div class="row mb-4">
+        <div class="col-12 text-center">
+          <button class="btn-clear-filters" (click)="clearFilters()">
+            <i class="bi bi-funnel me-2"></i>
+            Limpiar filtros
+          </button>
+        </div>
+      </div>
+    }
   </div>
 
+  
   @if (loading()) {
     <div class="text-center py-5">
       <div class="spinner-border text-success" role="status">
@@ -42,29 +82,44 @@
   } @else if (locations().length > 0) {
     <div class="row">
       @for (location of locations(); track location.id) {
-        <div class="col-6 col-md-6 col-lg-4 mb-4">
-          <div class="card h-100 location-card">
-            <div class="card-body">
-              <h5 class="card-title text-center mb-3">
-                <i [class]="'bi ' + getTypeIcon(location.type) + ' me-2'"></i>
-                {{ location.name }}
-              </h5>
-              <div class="d-flex flex-column gap-2">
-                <p class="card-text mb-0 d-flex justify-content-between">
+        <div class="col-4 col-md-6 col-lg-4 col-xl-3 mb-4">
+          <div class="location-hover-card" (click)="openLocationModal(location)">
+            
+            <div class="location-icon-area d-none d-md-flex">
+              <i class="bi bi-geo-alt-fill location-main-icon"></i>
+              <div class="location-residents-badge">{{ location.residents.length }}</div>
+            </div>
+
+            
+            <div class="location-icon-area-mobile d-md-none">
+              <i class="bi bi-geo-alt-fill location-main-icon-mobile"></i>
+              <div class="location-residents-badge">{{ location.residents.length }}</div>
+            </div>
+
+            
+            <div class="location-name-mobile d-md-none">
+              <span>{{ location.name }}</span>
+            </div>
+
+            
+            <div class="location-card-body d-none d-md-block">
+              <h5 class="location-card-title">{{ location.name }}</h5>
+              <div class="location-card-details">
+                <div class="location-detail-row">
                   <strong>Tipo:</strong>
-                  <span>{{ location.type }}</span>
-                </p>
-                <p class="card-text mb-0 d-flex justify-content-between">
+                  <span>{{ location.type || 'Desconocido' }}</span>
+                </div>
+                <div class="location-detail-row">
                   <strong>Dimensión:</strong>
-                  <span>{{ location.dimension || 'Desconocida' }}</span>
-                </p>
-                <p class="card-text mb-0 d-flex justify-content-between">
+                  <span class="text-truncate">{{ location.dimension || 'Desconocida' }}</span>
+                </div>
+                <div class="location-detail-row">
                   <strong>Residentes:</strong>
                   <span class="badge-residents">{{ location.residents.length }}</span>
-                </p>
+                </div>
               </div>
             </div>
-            <div class="card-footer bg-transparent">
+            <div class="location-card-footer d-none d-md-flex">
               <button class="btn-detail-custom w-100" (click)="openLocationModal(location)">
                 <span class="btn-content">
                   <i class="bi bi-info-circle-fill me-2"></i>
@@ -77,53 +132,6 @@
         </div>
       }
     </div>
-
-    <nav aria-label="Paginación">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="isCurrentPage(1) || isPaginationDisabled()">
-          <button
-            class="page-link"
-            (click)="previousPage()"
-            [disabled]="isCurrentPage(1) || isPaginationDisabled()"
-          >
-            <span class="d-none d-md-inline">Anterior</span>
-            <i class="bi bi-chevron-left d-md-none"></i>
-          </button>
-        </li>
-
-        @for (page of getPageNumbers(); track page) {
-          @if (shouldShowEllipsis(page)) {
-            <li class="page-item disabled">
-              <span class="page-link">...</span>
-            </li>
-          } @else {
-            <li class="page-item" [class.active]="isCurrentPage(page)">
-              <button
-                class="page-link"
-                (click)="goToPage(page)"
-                [disabled]="isPaginationDisabled()"
-              >
-                {{ page }}
-              </button>
-            </li>
-          }
-        }
-
-        <li
-          class="page-item"
-          [class.disabled]="isCurrentPage(totalPages()) || isPaginationDisabled()"
-        >
-          <button
-            class="page-link"
-            (click)="nextPage()"
-            [disabled]="isCurrentPage(totalPages()) || isPaginationDisabled()"
-          >
-            <span class="d-none d-md-inline">Siguiente</span>
-            <i class="bi bi-chevron-right d-md-none"></i>
-          </button>
-        </li>
-      </ul>
-    </nav>
   } @else {
     <div class="alert alert-info text-center" role="alert">
       <h4 class="alert-heading">No se encontraron locaciones</h4>
@@ -139,46 +147,35 @@
         @if (selectedLocation()) {
           <div class="modal-header">
             <h5 class="modal-title">
-              <i [class]="'bi ' + getTypeIcon(selectedLocation()!.type) + ' me-2'"></i>
-              {{ selectedLocation()!.name }}
+              <i class="bi bi-geo-alt-fill me-2"></i>{{ selectedLocation()!.name }}
             </h5>
             <button type="button" class="btn-close" (click)="closeModal()"></button>
           </div>
 
           <div class="modal-body">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="location-info">
-                  <div class="info-group mb-3">
-                    <label class="info-label">
-                      <i class="bi bi-bookmark-fill me-2"></i>Tipo de Locación
-                    </label>
-                    <span class="info-value">{{ selectedLocation()!.type }}</span>
-                  </div>
-
-                  <div class="info-group mb-3">
-                    <label class="info-label"> <i class="bi bi-stars me-2"></i>Dimensión </label>
-                    <span class="info-value">{{
-                      selectedLocation()!.dimension || 'Desconocida'
-                    }}</span>
-                  </div>
-
-                  <div class="info-group mb-3">
-                    <label class="info-label">
-                      <i class="bi bi-people-fill me-2"></i>Total de Residentes
-                    </label>
-                    <span class="info-value">{{ selectedLocation()!.residents.length }}</span>
-                  </div>
-                </div>
+            
+            <div class="location-info-grid">
+              <div class="info-group">
+                <label class="info-label"><i class="bi bi-bookmark-fill me-2"></i>Tipo</label>
+                <span class="info-value">{{ selectedLocation()!.type || 'Desconocido' }}</span>
+              </div>
+              <div class="info-group">
+                <label class="info-label"><i class="bi bi-stars me-2"></i>Dimensión</label>
+                <span class="info-value">{{ selectedLocation()!.dimension || 'Desconocida' }}</span>
+              </div>
+              <div class="info-group">
+                <label class="info-label"><i class="bi bi-people-fill me-2"></i>Residentes</label>
+                <span class="info-value">{{ selectedLocation()!.residents.length }}</span>
               </div>
             </div>
 
             <hr class="my-4" />
 
+            
             <div class="residents-section">
-              <h6 class="mb-3">
+              <h6 class="residents-heading">
                 <i class="bi bi-person-badge me-2"></i>
-                Residentes de esta Locación ({{ selectedLocation()!.residents.length }})
+                Residentes ({{ selectedLocation()!.residents.length }})
               </h6>
 
               @if (loadingModal()) {
@@ -222,12 +219,81 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="closeModal()">
-              <i class="bi bi-x-circle me-2"></i>Cerrar
-            </button>
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
           </div>
         }
       </div>
     </div>
   </div>
+}
+
+@if (showScrollButton()) {
+  <button class="scroll-button" (click)="scrollToPosition()">
+    <i [class]="isScrollingUp() ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+  </button>
+}
+
+@if (showFilterModal()) {
+  <div class="filter-modal-overlay" (click)="closeFilterModal()">
+    <div class="filter-modal-container" (click)="$event.stopPropagation()">
+      <div class="filter-modal-header">
+        <h5 class="filter-modal-title"><i class="bi bi-funnel-fill me-2"></i>Filtros</h5>
+        <button class="filter-modal-close" (click)="closeFilterModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="filter-modal-body">
+        <div class="filter-group">
+          <label class="filter-label"><i class="bi bi-search me-2"></i>Buscar por nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Nombre de la locación..."
+            [value]="searchName()"
+            (input)="onSearch($any($event.target).value)"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label"><i class="bi bi-bookmark me-2"></i>Tipo</label>
+          <select
+            class="form-select"
+            [value]="filterType()"
+            (change)="onFilterType($any($event.target).value)"
+          >
+            @for (opt of typeOptions(); track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label"><i class="bi bi-stars me-2"></i>Dimensión</label>
+          <select
+            class="form-select"
+            [value]="filterDimension()"
+            (change)="onFilterDimension($any($event.target).value)"
+          >
+            @for (opt of dimensionOptions(); track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-modal-footer">
+        @if (hasActiveFilters()) {
+          <button class="btn-clear-filters-modal" (click)="clearFilters()">Limpiar filtros</button>
+        }
+        <button class="btn-apply-filters" (click)="applyFiltersAndClose()">Aplicar</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showScrollButton()) {
+  <button class="scroll-button" (click)="scrollToPosition()">
+    <i [class]="isScrollingUp() ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+  </button>
 }

@@ -11,7 +11,16 @@ body {
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #f8f9fa;
-  overflow-y: scroll !important;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body.modal-open {
+  overflow: hidden !important;
+  padding-right: 0 !important;
 }
 
 body::-webkit-scrollbar {
@@ -19,13 +28,25 @@ body::-webkit-scrollbar {
   background: transparent;
 }
 
-html {
-  overflow-y: scroll;
+html.modal-open {
+  overflow: hidden !important;
 }
 
 html::-webkit-scrollbar {
   width: 0 !important;
   background: transparent;
+}
+
+.modal-overlay::-webkit-scrollbar,
+.modal-container::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
+
+.modal-overlay,
+.modal-container {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 body {

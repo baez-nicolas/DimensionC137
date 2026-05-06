@@ -1,27 +1,30 @@
 <div class="hero-section">
   <div class="animated-bg"></div>
+  <div class="portal-gun"></div>
+  <div class="portal-bg"></div>
   <div class="container">
     <div class="hero-content text-center text-white">
-      <div class="portal-icon mb-4">
-        <i class="bi bi-gear-fill"></i>
-      </div>
-      <h1 class="hero-title mb-4">Bienvenido a la Dimensión C-137</h1>
-      <p class="hero-subtitle mb-5">Explora el infinito multiverso de Rick y Morty</p>
+      <h1 class="hero-title mb-4">
+        <span class="title-part" style="animation-delay: 0.3s">Dimensión</span>
+        <span class="space-part">&nbsp;</span>
+        <span class="title-part" style="animation-delay: 0.6s">C-137</span>
+      </h1>
+      <p class="hero-subtitle mb-5 fade-in-up" style="animation-delay: 1s">
+        Explora el infinito multiverso de Rick y Morty
+      </p>
 
-      <div class="row g-4 mt-5">
-        <div class="col-lg-4 col-md-6">
+      <div class="row g-3 justify-content-center">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 fade-in-up" style="animation-delay: 1.4s">
           <a routerLink="/characters" class="text-decoration-none">
             <div class="feature-card characters-card">
               <div class="card-glow"></div>
               <div class="feature-icon-wrapper">
                 <i class="bi bi-person-badge-fill"></i>
               </div>
-              <h3 class="card-title">Personajes</h3>
               <div class="card-stats">
                 <span class="stat-number">826+</span>
                 <span class="stat-label">Personajes</span>
               </div>
-              <p class="card-description">Conoce los seres más extraños de realidades infinitas</p>
               <div class="card-arrow">
                 <i class="bi bi-arrow-right-circle-fill"></i>
               </div>
@@ -29,19 +32,17 @@
           </a>
         </div>
 
-        <div class="col-lg-4 col-md-6">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 fade-in-up" style="animation-delay: 1.6s">
           <a routerLink="/locations" class="text-decoration-none">
             <div class="feature-card locations-card">
               <div class="card-glow"></div>
               <div class="feature-icon-wrapper">
                 <i class="bi bi-geo-alt-fill"></i>
               </div>
-              <h3 class="card-title">Locaciones</h3>
               <div class="card-stats">
                 <span class="stat-number">126+</span>
                 <span class="stat-label">Dimensiones</span>
               </div>
-              <p class="card-description">Viaja a través del espacio, tiempo y dimensiones</p>
               <div class="card-arrow">
                 <i class="bi bi-arrow-right-circle-fill"></i>
               </div>
@@ -49,19 +50,17 @@
           </a>
         </div>
 
-        <div class="col-lg-4 col-md-12">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 fade-in-up" style="animation-delay: 1.8s">
           <a routerLink="/episodes" class="text-decoration-none">
             <div class="feature-card episodes-card">
               <div class="card-glow"></div>
               <div class="feature-icon-wrapper">
                 <i class="bi bi-collection-play-fill"></i>
               </div>
-              <h3 class="card-title">Episodios</h3>
               <div class="card-stats">
                 <span class="stat-number">51+</span>
                 <span class="stat-label">Episodios</span>
               </div>
-              <p class="card-description">Revive cada aventura y momento descabellado</p>
               <div class="card-arrow">
                 <i class="bi bi-arrow-right-circle-fill"></i>
               </div>
@@ -73,33 +72,289 @@
   </div>
 </div>
 
-<div class="features-section py-5">
+<div class="featured-section pt-5 pb-1">
   <div class="container">
-    <div class="row align-items-stretch">
-      <div class="col-md-6 mb-4 d-flex">
-        <div class="info-box">
-          <div class="info-icon">
-            <i class="bi bi-lightning-charge-fill"></i>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="featured-title">
+        <i class="bi bi-star-fill me-2"></i>
+        Personajes Destacados
+      </h2>
+      <a routerLink="/characters" class="see-all-btn">Ver todos</a>
+    </div>
+    <div class="featured-cards-container">
+      @for (character of featuredCharacters(); track character.id) {
+        <div class="featured-card-wrapper">
+          <div
+            class="featured-card"
+            [attr.data-status]="character.status.toLowerCase()"
+            (click)="openCharacterModal(character)"
+          >
+            <div class="card-image-wrapper">
+              <img [src]="character.image" [alt]="character.name" class="card-image" />
+              <span class="outfit-badge">PERSONAJE</span>
+            </div>
+            <div class="card-info">
+              <h5 class="character-name">{{ character.name }}</h5>
+              <p class="character-status">{{ character.species }}</p>
+            </div>
           </div>
-          <h3 class="mb-3">Datos en Tiempo Real</h3>
-          <p>
-            Toda la información se obtiene directamente de la API oficial de Rick and Morty,
-            garantizando precisión y contenido actualizado.
-          </p>
         </div>
-      </div>
-      <div class="col-md-6 mb-4 d-flex">
-        <div class="info-box">
-          <div class="info-icon">
-            <i class="bi bi-search"></i>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="featured-section pt-5 pb-1">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="featured-title">
+        <i class="bi bi-globe2 me-2"></i>
+        Locaciones Destacadas
+      </h2>
+      <a routerLink="/locations" class="see-all-btn">Ver todas</a>
+    </div>
+    <div class="featured-cards-container">
+      @for (location of featuredLocations(); track location.id) {
+        <div class="featured-card-wrapper">
+          <div class="featured-location-card" (click)="openLocationModal(location)">
+            <div class="location-icon-wrapper">
+              <i class="bi bi-geo-alt-fill"></i>
+            </div>
+            <div class="card-info">
+              <h5 class="location-name">{{ location.name }}</h5>
+              <p class="location-type">{{ location.type }}</p>
+              <p class="location-dimension">{{ location.dimension }}</p>
+            </div>
           </div>
-          <h3 class="mb-3">Búsqueda Avanzada</h3>
-          <p>
-            Filtra y busca entre miles de entradas con herramientas potentes para encontrar
-            exactamente lo que buscas.
-          </p>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="featured-section pt-5 pb-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="featured-title">
+        <i class="bi bi-tv-fill me-2"></i>
+        Episodios Destacados
+      </h2>
+      <a routerLink="/episodes" class="see-all-btn">Ver todos</a>
+    </div>
+    <div class="featured-cards-container">
+      @for (episode of featuredEpisodes(); track episode.id) {
+        <div class="featured-card-wrapper">
+          <div class="featured-episode-card" (click)="openEpisodeModal(episode)">
+            <div class="episode-icon-wrapper">
+              <i class="bi bi-play-circle-fill"></i>
+            </div>
+            <div class="card-info">
+              <h5 class="episode-name">{{ episode.name }}</h5>
+              <p class="episode-code">{{ episode.episode }}</p>
+              <p class="episode-date">{{ episode.air_date }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+@if (showCharacterModal() && selectedCharacter()) {
+  <div class="modal-overlay" (click)="closeCharacterModal()">
+    <div class="modal-container character-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeCharacterModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      <div class="modal-content">
+        
+        <div class="d-none d-md-block">
+          <div class="row g-0">
+            <div class="col-md-5">
+              <img
+                [src]="selectedCharacter()!.image"
+                [alt]="selectedCharacter()!.name"
+                class="modal-character-image"
+              />
+            </div>
+            <div class="col-md-7">
+              <div class="modal-body">
+                <h2 class="modal-title">{{ selectedCharacter()!.name }}</h2>
+                <div class="character-details">
+                  <div class="detail-item">
+                    <strong>Estado:</strong>
+                    <span
+                      [class]="'status-badge status-' + selectedCharacter()!.status.toLowerCase()"
+                    >
+                      {{ selectedCharacter()!.status }}
+                    </span>
+                  </div>
+                  <div class="detail-item">
+                    <strong>Especie:</strong>
+                    <span>{{ selectedCharacter()!.species }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <strong>Género:</strong>
+                    <span>{{ selectedCharacter()!.gender }}</span>
+                  </div>
+                  @if (selectedCharacter()!.type) {
+                    <div class="detail-item">
+                      <strong>Tipo:</strong>
+                      <span>{{ selectedCharacter()!.type }}</span>
+                    </div>
+                  }
+                  <div class="detail-item">
+                    <strong>Origen:</strong>
+                    <span>{{ selectedCharacter()!.origin.name }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <strong>Ubicación:</strong>
+                    <span>{{ selectedCharacter()!.location.name }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="d-md-none">
+          <div class="modal-header-custom character-header">
+            <img
+              [src]="selectedCharacter()!.image"
+              [alt]="selectedCharacter()!.name"
+              class="character-modal-avatar"
+            />
+            <h2 class="modal-title">{{ selectedCharacter()!.name }}</h2>
+            <div class="character-badges">
+              <span [class]="'status-badge status-' + selectedCharacter()!.status.toLowerCase()">
+                {{ selectedCharacter()!.status }}
+              </span>
+              <span class="badge bg-secondary">{{ selectedCharacter()!.species }}</span>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div class="mobile-details-grid">
+              <div class="mobile-detail-item">
+                <strong>Género</strong>
+                <span>{{ selectedCharacter()!.gender }}</span>
+              </div>
+              @if (selectedCharacter()!.type) {
+                <div class="mobile-detail-item">
+                  <strong>Tipo</strong>
+                  <span>{{ selectedCharacter()!.type }}</span>
+                </div>
+              }
+              <div class="mobile-detail-item">
+                <strong>Origen</strong>
+                <span>{{ selectedCharacter()!.origin.name }}</span>
+              </div>
+              <div class="mobile-detail-item">
+                <strong>Ubicación actual</strong>
+                <span>{{ selectedCharacter()!.location.name }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+}
+
+@if (showLocationModal() && selectedLocation()) {
+  <div class="modal-overlay" (click)="closeLocationModal()">
+    <div class="modal-container location-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeLocationModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      <div class="modal-content">
+        <div class="modal-header-custom">
+          <h2 class="modal-title">{{ selectedLocation()!.name }}</h2>
+          <div class="location-meta">
+            <span class="badge bg-info">{{ selectedLocation()!.type }}</span>
+            <span class="badge bg-secondary">{{ selectedLocation()!.dimension }}</span>
+          </div>
+        </div>
+        <div class="modal-body">
+          <h4 class="residents-title">
+            <i class="bi bi-people-fill me-2"></i>
+            Residentes
+            @if (!loadingResidents()) {
+              ({{ locationResidents().length }})
+            }
+          </h4>
+          @if (loadingResidents()) {
+            <div class="loading-container">
+              <div class="spinner-portal">
+                <i class="bi bi-arrow-repeat"></i>
+              </div>
+              <p class="loading-text">Cargando residentes...</p>
+            </div>
+          } @else if (locationResidents().length > 0) {
+            <div class="row g-3">
+              @for (resident of locationResidents(); track resident.id) {
+                <div class="col-4 col-md-4 col-lg-3">
+                  <div class="resident-card">
+                    <img [src]="resident.image" [alt]="resident.name" class="resident-image" />
+                    <h6 class="resident-name">{{ resident.name }}</h6>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="text-center text-muted">No hay residentes conocidos en esta locación</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showEpisodeModal() && selectedEpisode()) {
+  <div class="modal-overlay" (click)="closeEpisodeModal()">
+    <div class="modal-container episode-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeEpisodeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      <div class="modal-content">
+        <div class="modal-header-custom">
+          <h2 class="modal-title">{{ selectedEpisode()!.name }}</h2>
+          <div class="episode-meta">
+            <span class="badge bg-warning text-dark">{{ selectedEpisode()!.episode }}</span>
+            <span class="badge bg-secondary">{{ selectedEpisode()!.air_date }}</span>
+          </div>
+        </div>
+        <div class="modal-body">
+          <h4 class="characters-title">
+            <i class="bi bi-people-fill me-2"></i>
+            Personajes
+            @if (!loadingEpisodeCharacters()) {
+              ({{ episodeCharacters().length }})
+            }
+          </h4>
+          @if (loadingEpisodeCharacters()) {
+            <div class="loading-container">
+              <div class="spinner-portal">
+                <i class="bi bi-arrow-repeat"></i>
+              </div>
+              <p class="loading-text">Cargando personajes...</p>
+            </div>
+          } @else if (episodeCharacters().length > 0) {
+            <div class="row g-3">
+              @for (character of episodeCharacters(); track character.id) {
+                <div class="col-4 col-md-4 col-lg-3">
+                  <div class="resident-card">
+                    <img [src]="character.image" [alt]="character.name" class="resident-image" />
+                    <h6 class="resident-name">{{ character.name }}</h6>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="text-center text-muted">No hay personajes conocidos en este episodio</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,8 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+﻿import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { Character, Episode } from '../../models';
 import { CharacterService, EpisodeService } from '../../services';
+
+interface FilterOption {
+  label: string;
+  value: string;
+}
 
 @Component({
   selector: 'app-episodes',
@@ -11,157 +17,153 @@ import { CharacterService, EpisodeService } from '../../services';
   templateUrl: './episodes.component.html',
   styleUrl: './episodes.component.css',
 })
-export class EpisodesComponent implements OnInit {
+export class EpisodesComponent implements OnInit, OnDestroy {
   private readonly episodeService = inject(EpisodeService);
   private readonly characterService = inject(CharacterService);
 
+  allEpisodes = signal<Episode[]>([]);
   episodes = signal<Episode[]>([]);
   loading = signal(false);
-  currentPage = signal(1);
-  totalPages = signal(1);
   searchName = signal('');
-  filterEpisode = signal('');
+  filterSeason = signal('');
 
   showModal = signal(false);
   selectedEpisode = signal<Episode | null>(null);
   episodeCharacters = signal<Character[]>([]);
   loadingModal = signal(false);
+  showScrollButton = signal(false);
+  isScrollingUp = signal(false);
+  lastScrollTop = signal(0);
+  showFilterModal = signal(false);
+
+  seasonOptions = signal<FilterOption[]>([{ label: 'Todas las Temporadas', value: '' }]);
 
   hasCharacters = computed(() => this.episodeCharacters().length > 0);
 
+  hasActiveFilters = computed(() => {
+    return this.searchName() !== '' || this.filterSeason() !== '';
+  });
+
+  private scrollHandler = this.handleScroll.bind(this);
+
   ngOnInit(): void {
-    this.loadEpisodes();
+    this.loadAllEpisodes();
+    window.addEventListener('scroll', this.scrollHandler);
   }
 
-  loadEpisodes(): void {
+  ngOnDestroy(): void {
+    window.removeEventListener('scroll', this.scrollHandler);
+  }
+
+  loadAllEpisodes(): void {
     this.loading.set(true);
 
-    const filters: any = {
-      page: this.currentPage(),
-    };
+    this.episodeService.getAll(1).subscribe({
+      next: (firstResponse) => {
+        const totalPages = firstResponse.info.pages;
+        const requests = [this.episodeService.getAll(1)];
 
-    if (this.searchName()) {
-      filters.name = this.searchName();
-    }
-    if (this.filterEpisode()) {
-      filters.episode = this.filterEpisode();
-    }
+        for (let page = 2; page <= totalPages; page++) {
+          requests.push(this.episodeService.getAll(page));
+        }
 
-    this.episodeService.filter(filters).subscribe({
-      next: (response) => {
-        setTimeout(() => {
-          this.episodes.set(response.results);
-          this.totalPages.set(response.info.pages);
-          this.loading.set(false);
-        }, 1000);
+        forkJoin(requests).subscribe({
+          next: (responses) => {
+            const all: Episode[] = [];
+            responses.forEach((r) => all.push(...r.results));
+            this.allEpisodes.set(all);
+            this.extractSeasonOptions(all);
+            this.applyLocalFilters();
+            this.loading.set(false);
+          },
+          error: () => {
+            this.allEpisodes.set([]);
+            this.episodes.set([]);
+            this.loading.set(false);
+          },
+        });
       },
       error: () => {
-        setTimeout(() => {
-          this.episodes.set([]);
-          this.loading.set(false);
-        }, 1000);
+        this.allEpisodes.set([]);
+        this.episodes.set([]);
+        this.loading.set(false);
       },
     });
   }
 
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    const total = this.totalPages();
-    const current = this.currentPage();
+  extractSeasonOptions(episodes: Episode[]): void {
+    const seasons = new Set<string>();
+    episodes.forEach((ep) => {
+      if (ep.episode) {
+        const season = ep.episode.substring(0, 3);
+        seasons.add(season);
+      }
+    });
 
-    if (total <= 7) {
-      for (let i = 1; i <= total; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (current <= 4) {
-        for (let i = 1; i <= 5; i++) {
-          pages.push(i);
-        }
-        pages.push(-1);
-        pages.push(total);
-      } else if (current >= total - 3) {
-        pages.push(1);
-        pages.push(-1);
-        for (let i = total - 4; i <= total; i++) {
-          pages.push(i);
-        }
-      } else {
-        pages.push(1);
-        pages.push(-1);
-        for (let i = current - 1; i <= current + 1; i++) {
-          pages.push(i);
-        }
-        pages.push(-1);
-        pages.push(total);
-      }
+    const opts: FilterOption[] = [{ label: 'Todas las Temporadas', value: '' }];
+    Array.from(seasons)
+      .sort()
+      .forEach((s) => {
+        const num = parseInt(s.substring(1), 10);
+        opts.push({ label: `Temporada ${num}`, value: s });
+      });
+    this.seasonOptions.set(opts);
+  }
+
+  private applyLocalFilters(): void {
+    let filtered = [...this.allEpisodes()];
+
+    if (this.searchName()) {
+      const s = this.searchName().toLowerCase();
+      filtered = filtered.filter((ep) => ep.name.toLowerCase().includes(s));
+    }
+    if (this.filterSeason()) {
+      filtered = filtered.filter((ep) => ep.episode.startsWith(this.filterSeason()));
     }
 
-    return pages;
+    this.episodes.set(filtered);
   }
 
   onSearch(name: string): void {
     this.searchName.set(name);
-    this.currentPage.set(1);
-    this.loadEpisodes();
+    this.applyLocalFilters();
   }
 
-  onFilterEpisode(episode: string): void {
-    this.filterEpisode.set(episode);
-    this.currentPage.set(1);
-    this.loadEpisodes();
+  onFilterSeason(season: string): void {
+    this.filterSeason.set(season);
+    this.applyLocalFilters();
   }
 
-  nextPage(): void {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update((page) => page + 1);
-      this.loadEpisodes();
-    }
+  clearFilters(): void {
+    this.searchName.set('');
+    this.filterSeason.set('');
+    this.applyLocalFilters();
   }
 
-  previousPage(): void {
-    if (this.currentPage() > 1) {
-      this.currentPage.update((page) => page - 1);
-      this.loadEpisodes();
-    }
+  openFilterModal(): void {
+    this.showFilterModal.set(true);
+    document.body.classList.add('modal-open');
   }
 
-  goToPage(page: number): void {
-    this.currentPage.set(page);
-    this.loadEpisodes();
+  closeFilterModal(): void {
+    this.showFilterModal.set(false);
+    document.body.classList.remove('modal-open');
   }
 
-  getSeasonNumber(episode: string): string {
-    return episode.substring(1, 3);
-  }
-
-  getEpisodeNumber(episode: string): string {
-    return episode.substring(4, 6);
-  }
-
-  isCurrentPage(page: number): boolean {
-    return this.currentPage() === page;
-  }
-
-  isPaginationDisabled(direction: 'prev' | 'next'): boolean {
-    if (direction === 'prev') return this.currentPage() === 1;
-    return this.currentPage() === this.totalPages();
-  }
-
-  shouldShowEllipsis(pages: number[], index: number): boolean {
-    return pages[index] === -1;
+  applyFiltersAndClose(): void {
+    this.closeFilterModal();
   }
 
   openEpisodeModal(episode: Episode): void {
     this.selectedEpisode.set(episode);
     this.showModal.set(true);
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
     this.loadEpisodeCharacters(episode);
   }
 
   closeModal(): void {
     this.showModal.set(false);
-    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
     setTimeout(() => {
       this.selectedEpisode.set(null);
       this.episodeCharacters.set([]);
@@ -192,25 +194,53 @@ export class EpisodesComponent implements OnInit {
     });
   }
 
+  getSeasonLabel(episodeCode: string): string {
+    const num = parseInt(episodeCode.substring(1, 3), 10);
+    return `T${num}`;
+  }
+
+  getEpisodeNumber(episodeCode: string): string {
+    return `E${episodeCode.substring(4, 6)}`;
+  }
+
   getCharacterStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'alive':
-        return 'status-alive';
-      case 'dead':
-        return 'status-dead';
-      default:
-        return 'status-unknown';
-    }
+    const statusMap: { [key: string]: string } = {
+      Alive: 'status-alive',
+      Dead: 'status-dead',
+      unknown: 'status-unknown',
+    };
+    return statusMap[status] || 'status-unknown';
   }
 
   getCharacterStatusLabel(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'alive':
-        return 'Vivo';
-      case 'dead':
-        return 'Muerto';
-      default:
-        return 'Desconocido';
+    const statusMap: { [key: string]: string } = {
+      Alive: 'Vivo',
+      Dead: 'Muerto',
+      unknown: 'Desconocido',
+    };
+    return statusMap[status] || 'Desconocido';
+  }
+
+  handleScroll(): void {
+    const scrollTop = window.scrollY;
+    const lastScroll = this.lastScrollTop();
+
+    this.showScrollButton.set(scrollTop > 300);
+
+    if (scrollTop > lastScroll) {
+      this.isScrollingUp.set(false);
+    } else if (scrollTop < lastScroll) {
+      this.isScrollingUp.set(true);
+    }
+
+    this.lastScrollTop.set(scrollTop);
+  }
+
+  scrollToPosition(): void {
+    if (this.isScrollingUp()) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
     }
   }
 }
