@@ -1,0 +1,7 @@
+{
+  "outputDirectory": "dist/DimensionC137/browser",
+  "buildCommand": "npm run build",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
