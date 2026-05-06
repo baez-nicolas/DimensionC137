@@ -1,4 +1,4 @@
-# 🛸 Dimension C-137
+# 🛸 Dimensión C-137
 
 ![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
@@ -151,7 +151,7 @@ http://localhost:4200
 
 <div align="center">
 
-**[Volver arriba](#-dimension-c-137)**
+**[Volver arriba](#-dimensión-c-137)**
 
 Hecho con ❤️ y 🛸
 
