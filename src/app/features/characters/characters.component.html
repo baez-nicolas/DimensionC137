@@ -104,7 +104,7 @@
     </div>
   } @else if (characters().length > 0) {
     <div class="row">
-      @for (character of characters(); track character.id) {
+      @for (character of visibleCharacters(); track character.id) {
         <div class="col-4 col-md-6 col-lg-4 col-xl-3 mb-4">
           <div [class]="getCardClasses(character)" (click)="openCharacterModal(character)">
             <div class="position-relative img-wrapper">
@@ -157,6 +157,11 @@
         </div>
       }
     </div>
+    @if (hasMore()) {
+      <div class="text-center py-4">
+        <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+      </div>
+    }
   } @else {
     <div class="alert alert-info text-center" role="alert">
       <h4 class="alert-heading">No se encontraron personajes</h4>

@@ -38,6 +38,11 @@ export class EpisodesComponent implements OnInit, OnDestroy {
 
   seasonOptions = signal<FilterOption[]>([{ label: 'Todas las Temporadas', value: '' }]);
 
+  readonly PAGE_SIZE = 20;
+  displayCount = signal(20);
+  visibleEpisodes = computed(() => this.episodes().slice(0, this.displayCount()));
+  hasMore = computed(() => this.displayCount() < this.episodes().length);
+
   hasCharacters = computed(() => this.episodeCharacters().length > 0);
 
   hasActiveFilters = computed(() => {
@@ -122,6 +127,7 @@ export class EpisodesComponent implements OnInit, OnDestroy {
     }
 
     this.episodes.set(filtered);
+    this.displayCount.set(20);
   }
 
   onSearch(name: string): void {
@@ -234,6 +240,12 @@ export class EpisodesComponent implements OnInit, OnDestroy {
     }
 
     this.lastScrollTop.set(scrollTop);
+
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    if (scrollTop + clientHeight >= scrollHeight - 300 && this.hasMore()) {
+      this.displayCount.update((n) => n + this.PAGE_SIZE);
+    }
   }
 
   scrollToPosition(): void {

@@ -1,4 +1,4 @@
-﻿<div class="container py-4">
+<div class="container py-4">
   <div class="row mb-4">
     <div class="col text-center text-md-start">
       <h1 class="display-5 fw-bold episode-title">
@@ -66,7 +66,7 @@
     </div>
   } @else if (episodes().length > 0) {
     <div class="row">
-      @for (episode of episodes(); track episode.id) {
+      @for (episode of visibleEpisodes(); track episode.id) {
         <div class="col-4 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex">
           <div class="episode-hover-card w-100" (click)="openEpisodeModal(episode)">
             <div class="episode-icon-area d-none d-md-flex">
@@ -113,6 +113,11 @@
         </div>
       }
     </div>
+    @if (hasMore()) {
+      <div class="text-center py-4">
+        <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+      </div>
+    }
   } @else {
     <div class="alert alert-info text-center" role="alert">
       <h4 class="alert-heading">No se encontraron episodios</h4>
@@ -277,9 +282,7 @@
                 <span class="info-value">{{ selectedEpisode()!.episode }}</span>
               </div>
               <div class="info-group">
-                <label class="info-label"
-                  ><i class="bi bi-calendar-event me-2"></i>Emisión</label
-                >
+                <label class="info-label"><i class="bi bi-calendar-event me-2"></i>Emisión</label>
                 <span class="info-value">{{ selectedEpisode()!.air_date }}</span>
               </div>
               <div class="info-group">

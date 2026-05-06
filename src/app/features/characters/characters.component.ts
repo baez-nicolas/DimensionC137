@@ -47,6 +47,11 @@ export class CharactersComponent implements OnInit {
   speciesOptions = signal<FilterConfig[]>([{ label: 'Todas las Especies', value: '' }]);
   locationOptions = signal<FilterConfig[]>([{ label: 'Todas las Locaciones', value: '' }]);
 
+  readonly PAGE_SIZE = 20;
+  displayCount = signal(20);
+  visibleCharacters = computed(() => this.characters().slice(0, this.displayCount()));
+  hasMore = computed(() => this.displayCount() < this.characters().length);
+
   hasActiveFilters = computed(() => {
     return (
       this.searchName() !== '' ||
@@ -244,6 +249,7 @@ export class CharactersComponent implements OnInit {
     }
 
     this.characters.set(filtered);
+    this.displayCount.set(20);
   }
 
   getStatusClass(status: string): string {
@@ -317,6 +323,12 @@ export class CharactersComponent implements OnInit {
     }
 
     this.lastScrollTop.set(scrollTop);
+
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    if (scrollTop + clientHeight >= scrollHeight - 300 && this.hasMore()) {
+      this.displayCount.update((n) => n + this.PAGE_SIZE);
+    }
   }
 
   scrollToPosition(): void {

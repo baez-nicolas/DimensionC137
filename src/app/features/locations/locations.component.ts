@@ -40,6 +40,11 @@ export class LocationsComponent implements OnInit, OnDestroy {
   typeOptions = signal<FilterOption[]>([{ label: 'Todos los Tipos', value: '' }]);
   dimensionOptions = signal<FilterOption[]>([{ label: 'Todas las Dimensiones', value: '' }]);
 
+  readonly PAGE_SIZE = 20;
+  displayCount = signal(20);
+  visibleLocations = computed(() => this.locations().slice(0, this.displayCount()));
+  hasMore = computed(() => this.displayCount() < this.locations().length);
+
   hasResidents = computed(() => {
     const location = this.selectedLocation();
     return location && location.residents.length > 0;
@@ -133,6 +138,7 @@ export class LocationsComponent implements OnInit, OnDestroy {
     }
 
     this.locations.set(filtered);
+    this.displayCount.set(20);
   }
 
   onSearch(name: string): void {
@@ -242,6 +248,12 @@ export class LocationsComponent implements OnInit, OnDestroy {
     }
 
     this.lastScrollTop.set(scrollTop);
+
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    if (scrollTop + clientHeight >= scrollHeight - 300 && this.hasMore()) {
+      this.displayCount.update((n) => n + this.PAGE_SIZE);
+    }
   }
 
   scrollToPosition(): void {
