@@ -108,12 +108,13 @@
         <div class="col-4 col-md-6 col-lg-4 col-xl-3 mb-4">
           <div [class]="getCardClasses(character)" (click)="openCharacterModal(character)">
             <div class="position-relative img-wrapper">
-              <div class="img-skeleton"></div>
+              <div class="img-skeleton" #skeleton></div>
               <img
                 [src]="character.image"
                 [alt]="character.name"
                 class="card-img-top"
                 loading="lazy"
+                (load)="skeleton.style.display = 'none'"
               />
             </div>
             <div class="character-name-mobile">
